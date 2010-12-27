@@ -89,9 +89,9 @@ public class SimulationCanvas extends Canvas {
 			dim = getSize();
 			offscreenImage = createImage(dim.width, dim.height);
 			bufferGraphics = offscreenImage.getGraphics();
-			createMiniMapImage();
 		}
 		
+		createMiniMapImage();
 		bufferGraphics.clearRect(0, 0, dim.width, dim.height);
 		bufferGraphics.drawImage(mapImage, 0, 0, null);
 		
