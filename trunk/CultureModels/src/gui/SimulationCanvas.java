@@ -42,8 +42,6 @@ public class SimulationCanvas extends Canvas {
 	
     public void paintGridCell(Graphics g, int i, int j) {
     	
-    	Simulations.printPopulation(agentPopulation);
-    	
     	Agent<Integer> ag = agentPopulation[i][j];
     	int red = 0, green = 0, blue = 0;
     	

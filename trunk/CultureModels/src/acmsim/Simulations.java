@@ -208,7 +208,7 @@ public class Simulations {
 			}
 		});
 		
-		runSimulation(1000, pop);
+		runSimulation(5000, pop);
 	}
 
 }
