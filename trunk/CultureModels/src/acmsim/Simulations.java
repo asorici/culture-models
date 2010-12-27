@@ -147,7 +147,7 @@ public class Simulations {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					mainInterface.setPopulation(holdPopulation);
+					//mainInterface.setPopulation(holdPopulation);
 					mainInterface.updateCanvas();
 				}
 			});
@@ -208,7 +208,7 @@ public class Simulations {
 			}
 		});
 		
-		runSimulation(5000, pop);
+		//runSimulation(5000, pop);
 	}
 
 }
