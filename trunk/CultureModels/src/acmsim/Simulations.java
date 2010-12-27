@@ -1,4 +1,6 @@
 package acmsim;
+import gui.MainInterface;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,11 +10,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
 import acm.Agent;
 import acm.SimpleAgent;
 
 public class Simulations {
-
+	private static MainInterface mainInterface;
+	
 	public static Agent<?>[][] loadPopulation(String filename) {
 		Agent<?>[][] population = null;
 		BufferedReader br;
@@ -75,8 +80,7 @@ public class Simulations {
 		return neighbors;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void runSimulation(int numGenerations, Agent<?>[][] population) {
+	public static void runSimulation(int numGenerations, Agent<Integer>[][] population) {
 
 		for (int i = 0; i < population.length; i++) {
 			for (int j = 0; j < population.length; j++) {
@@ -86,6 +90,8 @@ public class Simulations {
 		
 		int gen = 0;
 		while (gen < numGenerations) {
+			System.out.println("gen: " + gen);
+			
 			// randomly select an individual
 			int y = Agent.random.nextInt(population.length);
 			int x = Agent.random.nextInt(population.length);
@@ -93,9 +99,7 @@ public class Simulations {
 			final Agent selectedAgent = population[y][x];
 			
 			// rank agent's neighbors according to their interaction probability
-			
 			List<Agent> neighbors = selectedAgent.getNeighbors();
-			
 			Collections.sort(neighbors, new Comparator<Agent>() {
 			
 				@Override
@@ -105,47 +109,54 @@ public class Simulations {
 					}
 					else {
 						if (selectedAgent.interactionProbability(ag1) > selectedAgent.interactionProbability(ag2)) {
-							return -1;
+							return 1;
 						}
 						else {
-							return 1;
+							return -1;
 						}
 					}
 				}
 			});
 									
-			
-			
 			Agent selectedNeighbor = neighbors.get(Agent.random.nextInt(neighbors.size()));		
-
-			
 			double interaction = Agent.random.nextDouble();
 			
 			// pick neighbor to interact with
-			for(int i=0;i<neighbors.size();i++)
+			for(int i = 0; i < neighbors.size(); i++)
 			{
 				Agent crtNeighbor = neighbors.get(i);
 				double lowThreshold = sum(neighbors,selectedAgent,neighbors.indexOf(crtNeighbor)) / sumAll(neighbors,selectedAgent);
 				double highThreshold = sum(neighbors,selectedAgent,neighbors.indexOf(crtNeighbor) + 1)/ sumAll(neighbors, selectedAgent);
 			
-				if(interaction > lowThreshold && interaction < highThreshold)
-					{
-						selectedNeighbor = crtNeighbor;
-						break;
-					}
+				if(interaction > lowThreshold && interaction < highThreshold) 
+				{
+					selectedNeighbor = crtNeighbor;
+					break;
+				}
 			}
 			
-		//	double interactionThreshold = Agent.random.nextDouble();
 			
-
 		//	double interactionThreshold = Agent.random.nextDouble();
-			
 		//	if (selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
 				selectedAgent.interactWith(selectedNeighbor);			// we might not be able to		
 				selectedAgent.update();									// interact with any neighbor
 		//	}
 		
 			
+			final Agent<Integer>[][] holdPopulation = population;
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					mainInterface.setPopulation(holdPopulation);
+					mainInterface.updateCanvas();
+				}
+			});
+			
+			try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			
 			gen++;
 		}
@@ -188,15 +199,16 @@ public class Simulations {
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		Agent[][] pop = loadPopulation("files/population1.txt");
-
-/*		System.out.println(pop[0][0] + "\n" + pop[0][1]);
-		System.out.println(pop[0][0].numberOfMatchingFeatures(pop[0][1]));
-
-		pop[0][0].interactWith(pop[0][1]);
-		System.out.println(pop[0][0] + " <> " + pop[0][1]);
-		System.out.println(pop[0][0].numberOfMatchingFeatures(pop[0][1]));
-*/
-		runSimulation(5000, pop);
+		mainInterface = new MainInterface(pop);
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				mainInterface.setVisible(true);
+			}
+		});
+		
+		runSimulation(1000, pop);
 	}
 
 }

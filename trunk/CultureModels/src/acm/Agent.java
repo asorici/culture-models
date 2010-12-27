@@ -65,6 +65,10 @@ public abstract class Agent<T> {
 		this.neighbors = neighbors;
 	}
 
+	public List<T> getFeatures() {
+		return features;
+	}
+	
 	public int getPosX() {
 		return posX;
 	}
@@ -89,4 +93,6 @@ public abstract class Agent<T> {
 		
 		return info;
 	}
+
+	
 }
