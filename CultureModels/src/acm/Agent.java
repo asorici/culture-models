@@ -6,7 +6,7 @@ import java.util.Random;
 
 public abstract class Agent<T> {
 
-	static Random random = new Random();
+	public static Random random = new Random();
 
 	int nFeatures;
 	List<T> features;
@@ -15,6 +15,7 @@ public abstract class Agent<T> {
 	// position in the population (matrix)
 	int posX, posY;
 
+	@SuppressWarnings("unchecked")
 	public Agent(int nFeatures, String featureString) {
 		super();
 		this.nFeatures = nFeatures;
@@ -30,13 +31,15 @@ public abstract class Agent<T> {
 			if (!features.get(i).equals(ag.features.get(i)))
 				indexes.add(i);
 
-		System.out.println("Non matching: " + indexes);
+		//System.out.println("Non matching: " + indexes);
 
-		int i = indexes.get(random.nextInt(indexes.size()));
-		System.out.println("i = " + i);
-		System.out.println(features + " <>" + ag.features);
-
-		features.set(i, ag.features.get(i));
+		if (!indexes.isEmpty()) {
+			int i = indexes.get(random.nextInt(indexes.size()));
+			//System.out.println("i = " + i);
+			//System.out.println(features + " <>" + ag.features);
+	
+			features.set(i, ag.features.get(i));
+		}
 	}
 
 	public int numberOfMatchingFeatures(Agent<T> ag) {
@@ -51,6 +54,15 @@ public abstract class Agent<T> {
 
 	public abstract double interactionProbability(Agent<T> ag);
 
+	public void update() {
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Agent> getNeighbors() {
+		return neighbors;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public void setNeighbors(List<Agent> neighbors) {
 		this.neighbors = neighbors;
 	}
@@ -71,4 +83,12 @@ public abstract class Agent<T> {
 		this.posY = posY;
 	}
 
+	public String toString() {
+		String info = "";
+		for (T feat : features) {
+			info += feat.toString();
+		}
+		
+		return info;
+	}
 }
