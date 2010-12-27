@@ -60,6 +60,18 @@ public class Simulations {
 
 		int size = pop.length;
 
+		
+		neighbors.add(pop[(i-1) % size][(j - 1) % size]);
+		neighbors.add(pop[(i-1) % size][j]);
+		neighbors.add(pop[(i-1) % size][(j + 1) % size]);
+		neighbors.add(pop[i][(j - 1) % size]);
+		neighbors.add(pop[i][(j + 1) % size]);
+		neighbors.add(pop[(i+1) % size][(j - 1) % size]);
+		neighbors.add(pop[(i+1) % size][j]);
+		neighbors.add(pop[(i+1) % size][(j + 1) % size]);
+		
+		
+		/*
 		if (i > 0 && j > 0)
 			neighbors.add(pop[i - 1][j - 1]);
 		if (i > 0)
@@ -76,7 +88,8 @@ public class Simulations {
 			neighbors.add(pop[i + 1][j]);
 		if (i < size - 1 && j < size - 1)
 			neighbors.add(pop[i + 1][j + 1]);
-
+		*/
+		
 		return neighbors;
 	}
 
