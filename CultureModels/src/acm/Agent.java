@@ -31,12 +31,8 @@ public abstract class Agent<T> {
 			if (!features.get(i).equals(ag.features.get(i)))
 				indexes.add(i);
 
-		//System.out.println("Non matching: " + indexes);
-
 		if (!indexes.isEmpty()) {
 			int i = indexes.get(random.nextInt(indexes.size()));
-			//System.out.println("i = " + i);
-			//System.out.println(features + " <>" + ag.features);
 	
 			features.set(i, ag.features.get(i));
 		}
@@ -59,6 +55,8 @@ public abstract class Agent<T> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Agent> getNeighbors() {
+		// sort agents
+		
 		return neighbors;
 	}
 	

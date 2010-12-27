@@ -45,6 +45,7 @@ public class Simulations {
 		return population;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<Agent> getNeighbors(Agent<?> ag, Agent<?>[][] pop) {
 
 		List<Agent> neighbors = new ArrayList<Agent>();
@@ -74,6 +75,7 @@ public class Simulations {
 		return neighbors;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static void runSimulation(int numGenerations, Agent<?>[][] population) {
 
 		for (int i = 0; i < population.length; i++) {
@@ -90,16 +92,60 @@ public class Simulations {
 			
 			final Agent selectedAgent = population[y][x];
 			
-			// rank agent's neighbours according to their interaction probability
-			List<Agent> neighbours = selectedAgent.getNeighbors();
-			Agent selectedNeighbor = neighbours.get(Agent.random.nextInt(neighbours.size()));
+			// rank agent's neighbors according to their interaction probability
 			
-			double interactionThreshold = Agent.random.nextDouble();
+			List<Agent> neighbors = selectedAgent.getNeighbors();
 			
-			if (selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
+			Collections.sort(neighbors, new Comparator<Agent>() {
+			
+				@Override
+				public int compare(Agent ag1, Agent ag2) {					
+					if (selectedAgent.interactionProbability(ag1) == selectedAgent.interactionProbability(ag2)) {
+						return 2 * Agent.random.nextInt(2) - 1;
+					}
+					else {
+						if (selectedAgent.interactionProbability(ag1) > selectedAgent.interactionProbability(ag2)) {
+							return -1;
+						}
+						else {
+							return 1;
+						}
+					}
+				}
+			});
+									
+			
+			
+			Agent selectedNeighbor = neighbors.get(Agent.random.nextInt(neighbors.size()));		
+
+			
+			double interaction = Agent.random.nextDouble();
+			
+			// pick neighbor to interact with
+			for(int i=0;i<neighbors.size();i++)
+			{
+				Agent crtNeighbor = neighbors.get(i);
+				double lowThreshold = sum(neighbors,selectedAgent,neighbors.indexOf(crtNeighbor)) / sumAll(neighbors,selectedAgent);
+				double highThreshold = sum(neighbors,selectedAgent,neighbors.indexOf(crtNeighbor) + 1)/ sumAll(neighbors, selectedAgent);
+			
+				if(interaction > lowThreshold && interaction < highThreshold)
+					{
+						selectedNeighbor = crtNeighbor;
+						break;
+					}
+			}
+			
+		//	double interactionThreshold = Agent.random.nextDouble();
+			
+
+		//	double interactionThreshold = Agent.random.nextDouble();
+			
+		//	if (selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
 				selectedAgent.interactWith(selectedNeighbor);			// we might not be able to		
 				selectedAgent.update();									// interact with any neighbor
-			}
+		//	}
+		
+			
 			
 			gen++;
 		}
@@ -107,6 +153,24 @@ public class Simulations {
 		printPopulation(population);
 	}
 
+	@SuppressWarnings("unchecked")
+	public static double sum(List<Agent> neighbors, Agent selectedAgent, int index){
+		double sum = 0.0;
+		for(int i = 0;i < index; i++)
+			sum += selectedAgent.interactionProbability(neighbors.get(i));
+		
+		return sum;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static double sumAll(List<Agent> neighbors, Agent selectedAgent){
+		double sum = 0.0;
+		for(int i = 0;i < neighbors.size(); i++)
+			sum += selectedAgent.interactionProbability(neighbors.get(i));
+		
+		return sum;
+	}
+	
 	public static void printPopulation(Agent<?>[][] population) {
 		for (int i = 0; i < population.length; i++) {
 			for (int j = 0; j < population.length; j++) {
@@ -121,23 +185,24 @@ public class Simulations {
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		Agent[][] pop = loadPopulation("files/population1.txt");
 
-		System.out.println(pop[0][0] + "\n" + pop[0][1]);
+/*		System.out.println(pop[0][0] + "\n" + pop[0][1]);
 		System.out.println(pop[0][0].numberOfMatchingFeatures(pop[0][1]));
 
 		pop[0][0].interactWith(pop[0][1]);
-		System.out.println(pop[0][0] + " vs. " + pop[0][1]);
+		System.out.println(pop[0][0] + " <> " + pop[0][1]);
 		System.out.println(pop[0][0].numberOfMatchingFeatures(pop[0][1]));
-
+*/
 		runSimulation(5000, pop);
 	}
 
 }
 
 /*
-Collections.sort(neighbours, new Comparator<Agent>() {
+Collections.sort(neighbors, new Comparator<Agent>() {
 	@SuppressWarnings("unchecked")
 	@Override
 	public int compare(Agent ag1, Agent ag2) {					
