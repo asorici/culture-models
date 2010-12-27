@@ -110,8 +110,15 @@ public class MainInterface extends JFrame implements ActionListener {
 					SwingWorker<Void, Integer> simWorker = new SwingWorker<Void, Integer>() {
 						@Override
 						protected Void doInBackground() throws Exception {
-							Simulations.runSimulation(holdNumGenerations, population);
-							return null;
+							try {
+								Simulations.runSimulation(holdNumGenerations, population);
+								return null;
+							}
+							catch(Exception ex) {
+								ex.printStackTrace();
+								return null;
+							}
+							
 						}
 						
 						@Override

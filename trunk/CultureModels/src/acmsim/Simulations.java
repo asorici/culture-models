@@ -59,17 +59,15 @@ public class Simulations {
 		int j = ag.getPosX();
 
 		int size = pop.length;
-
 		
-		neighbors.add(pop[(i-1) % size][(j - 1) % size]);
-		neighbors.add(pop[(i-1) % size][j]);
-		neighbors.add(pop[(i-1) % size][(j + 1) % size]);
-		neighbors.add(pop[i][(j - 1) % size]);
-		neighbors.add(pop[i][(j + 1) % size]);
-		neighbors.add(pop[(i+1) % size][(j - 1) % size]);
-		neighbors.add(pop[(i+1) % size][j]);
-		neighbors.add(pop[(i+1) % size][(j + 1) % size]);
-		
+		neighbors.add(pop[(i - 1 + size) % size][(j - 1 + size) % size]);
+		neighbors.add(pop[(i - 1  + size) % size][j]);
+		neighbors.add(pop[(i - 1  + size) % size][(j + 1 + size) % size]);
+		neighbors.add(pop[i][(j - 1  + size) % size]);
+		neighbors.add(pop[i][(j + 1 + size) % size]);
+		neighbors.add(pop[(i + 1 + size) % size][(j - 1 + size) % size]);
+		neighbors.add(pop[(i + 1  + size) % size][j]);
+		neighbors.add(pop[(i + 1  + size) % size][(j + 1 + size) % size]);
 		
 		/*
 		if (i > 0 && j > 0)
