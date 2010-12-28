@@ -12,7 +12,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Array;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -23,6 +23,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
@@ -52,6 +54,8 @@ public class MainInterface extends JFrame implements ActionListener {
 	private JPanel controlPanel;
 	private JButton runButton;
 	private JTextField nrRunsTextfield;
+	
+	private JTextArea simProgressDisplayArea;
 	
 	final JFileChooser fc = new JFileChooser(".");
 	
@@ -107,6 +111,14 @@ public class MainInterface extends JFrame implements ActionListener {
 		canvasPanel = new JPanel();
 		canvasPanel.add(simCanvas);
 		
+		simProgressDisplayArea = new JTextArea();
+		simProgressDisplayArea.setLocation(100, 20);
+		simProgressDisplayArea.setPreferredSize(new Dimension(400, 300));
+		simProgressDisplayArea.setEditable(false);
+		simProgressDisplayArea.setText("");
+		JScrollPane progressDisplayPanel = new JScrollPane(simProgressDisplayArea);
+		//progressDisplayPanel.setSize(400, 300);
+		
 		controlPanel = new JPanel(new GridLayout(3, 0));
 		controlPanel.setSize(200, 100);
 		controlPanel.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -134,10 +146,10 @@ public class MainInterface extends JFrame implements ActionListener {
 		
 		controlPanel.add(selectionLabelPanel);
 		controlPanel.add(runDataPanel);
-		//controlPanel.add(buttonPanel);
 		
 		add(BorderLayout.CENTER, canvasPanel);
 		add(BorderLayout.EAST, controlPanel);
+		add(BorderLayout.SOUTH, progressDisplayPanel);
 		
 		addWindowListener(new WindowAdapter() {
             public void windowClosing(final WindowEvent we) {
@@ -150,8 +162,9 @@ public class MainInterface extends JFrame implements ActionListener {
 
 	public void updateCanvas() {
 		//Simulations.printPopulation(population);
+		simProgressDisplayArea.setText(printPopulation(population));
+		simProgressDisplayArea.repaint();
 		simCanvas.repaint();
-		//repaint();
 	}
 	
 	@Override
@@ -198,43 +211,59 @@ public class MainInterface extends JFrame implements ActionListener {
 		}
 		
 		if (evt.getSource().equals(populationMenuItem)) {
-			int returnVal = fc.showOpenDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-	            String filename = fc.getSelectedFile().getAbsolutePath();
-	            setPopulation(loadPopulation(filename, BalancedAgent.class));
-	            agentTypeLabel.setText("Simple Agent");
-				simulationTypeLabel.setText("Base Sim");
-				agentTypeLabel.repaint();
-				simulationTypeLabel.repaint();
+			synchronized(simRunning) {
+				if (!simRunning) {
+					int returnVal = fc.showOpenDialog(this);
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+			            String filename = fc.getSelectedFile().getAbsolutePath();
+			            setPopulation(loadPopulation(filename, SimpleAgent.class));
+			            agentTypeLabel.setText("Simple Agent");
+						simulationTypeLabel.setText("Base Sim");
+						agentTypeLabel.repaint();
+						simulationTypeLabel.repaint();
+					}
+				}
 			}
 		}
 		
 		if (evt.getActionCommand().equalsIgnoreCase("simpleagent")) {
-			int returnVal = fc.showOpenDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-	            String filename = fc.getSelectedFile().getAbsolutePath();
-				setPopulation(loadPopulation(filename, BalancedAgent.class));
-				agentTypeLabel.setText("Simple Agent");
-				simulationTypeLabel.setText("Base Sim");
-				agentTypeLabel.repaint();
-				simulationTypeLabel.repaint();
+			synchronized(simRunning) {
+				if (!simRunning) {
+					int returnVal = fc.showOpenDialog(this);
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+			            String filename = fc.getSelectedFile().getAbsolutePath();
+						setPopulation(loadPopulation(filename, SimpleAgent.class));
+						agentTypeLabel.setText("Simple Agent");
+						simulationTypeLabel.setText("Base Sim");
+						agentTypeLabel.repaint();
+						simulationTypeLabel.repaint();
+					}
+				}
 			}
 		}
 		
 		if (evt.getActionCommand().equalsIgnoreCase("balancedagent")) {
-			int returnVal = fc.showOpenDialog(this);
-			if (returnVal == JFileChooser.APPROVE_OPTION) {
-	            String filename = fc.getSelectedFile().getAbsolutePath();
-				setPopulation(loadPopulation(filename, BalancedAgent.class));
-				agentTypeLabel.setText("Balanced Agent");
-				simulationTypeLabel.setText("Base Sim");
-				agentTypeLabel.repaint();
-				simulationTypeLabel.repaint();
+			synchronized(simRunning) {
+				if (!simRunning) {
+					int returnVal = fc.showOpenDialog(this);
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+			            String filename = fc.getSelectedFile().getAbsolutePath();
+						setPopulation(loadPopulation(filename, BalancedAgent.class));
+						agentTypeLabel.setText("Balanced Agent");
+						simulationTypeLabel.setText("Base Sim");
+						agentTypeLabel.repaint();
+						simulationTypeLabel.repaint();
+					}
+				}
 			}
 		}
 		
 		if (evt.getActionCommand().equalsIgnoreCase("complexagent")) {
-			
+			synchronized(simRunning) {
+				if (!simRunning) {
+					
+				}
+			}
 		}
 	}
 
@@ -250,6 +279,9 @@ public class MainInterface extends JFrame implements ActionListener {
 		else {
 			simulation = null;
 		}
+		
+		simProgressDisplayArea.setText(printPopulation(population));
+		simProgressDisplayArea.repaint();
 		
 		simCanvas.setAgentPopulation(population);
 		simCanvas.repaint();
@@ -273,7 +305,9 @@ public class MainInterface extends JFrame implements ActionListener {
 			int f = Integer.parseInt(br.readLine().trim());
 
 			//population = new SimpleAgent[n][n];
-			population = new BalancedAgent[n][n];
+			//population = new BalancedAgent[n][n];
+			population = (Agent<Integer>[][]) Array.newInstance(agentClass, new int[] {n, n});
+			//population = new Agent<Integer>[n][n];
 			
 			for (int i = 0; i < n; i++) {
 				String[] individuals = br.readLine().split(" ");
@@ -305,6 +339,22 @@ public class MainInterface extends JFrame implements ActionListener {
 		}
 		
 		return population;
+	}
+	
+	private String printPopulation(Agent<Integer>[][] population) {
+		String info = "";
+		if (population != null) {
+			for (int i = 0; i < population.length; i++) {
+				for (int j = 0; j < population.length; j++) {
+					info += population[i][j].toString() + "  ";
+				}
+				info += "\n";
+			}
+			
+			info += "\n";
+		}
+		
+		return info;
 	}
 	
 	public static void main(String[] args) {

@@ -112,7 +112,7 @@ public class BaseSimulation implements Simulation {
 			});
 			
 			try {
-				Thread.sleep(5);
+				Thread.sleep(Simulation.DELAY);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
