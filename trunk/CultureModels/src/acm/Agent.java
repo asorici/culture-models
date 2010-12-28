@@ -24,6 +24,10 @@ public abstract class Agent<T> {
 	}
 
 	public void interactWith(Agent<T> ag) {
+		if (ag == null) {
+			return;
+		}
+		
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
 		for (int i = 0; i < nFeatures; i++) {
 			if (!features.get(i).equals(ag.features.get(i))) {

@@ -59,49 +59,52 @@ public class BaseSimulation implements Simulation {
 			
 			// rank agent's neighbors according to their interaction probability
 			List<Agent> neighbors = selectedAgent.getNeighbors();
-			Collections.sort(neighbors, new Comparator<Agent>() {
 			
-				@Override
-				public int compare(Agent ag1, Agent ag2) {					
-					if (selectedAgent.interactionProbability(ag1) == selectedAgent.interactionProbability(ag2)) {
-						return 2 * Agent.random.nextInt(2) - 1;
-					}
-					else {
-						if (selectedAgent.interactionProbability(ag1) > selectedAgent.interactionProbability(ag2)) {
-							return 1;
-						}
-						else {
-							return -1;
-						}
-					}
-				}
-			});
-									
-			Agent selectedNeighbor = neighbors.get(Agent.random.nextInt(neighbors.size()));		
-			double interaction = Agent.random.nextDouble();
+			System.out.println(neighbors);
+			for (int k = 0; k < neighbors.size(); k++) {
+				Agent ag = neighbors.get(k);
+				System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
+			}
+			System.out.println();
+			
+					
+			double interactionSelection = Agent.random.nextDouble();
 			
 			// pick neighbor to interact with
+			Agent selectedNeighbor = null;
+			
 			for(int i = 0; i < neighbors.size(); i++)
 			{
 				Agent crtNeighbor = neighbors.get(i);
 				double lowThreshold = sum(neighbors,selectedAgent,neighbors.indexOf(crtNeighbor)) / sumAll(neighbors,selectedAgent);
 				double highThreshold = sum(neighbors,selectedAgent,neighbors.indexOf(crtNeighbor) + 1)/ sumAll(neighbors, selectedAgent);
 			
-				if(interaction > lowThreshold && interaction < highThreshold) 
+				if(interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
 				{
 					selectedNeighbor = crtNeighbor;
 					break;
 				}
 			}
 			
+			/*
+			if (selectedNeighbor != null) {
+				System.out.println(selectedNeighbor);
+			}
+			else {
+				System.out.println("null");
+			}
+			*/
 			
-		//	double interactionThreshold = Agent.random.nextDouble();
-		//	if (selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
+			double interactionThreshold = Agent.random.nextDouble();
+			if (selectedNeighbor != null && selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
+				System.out.println(selectedNeighbor);
 				selectedAgent.interactWith(selectedNeighbor);			// we might not be able to		
 				selectedAgent.update();									// interact with any neighbor
-		//	}
+			}
+			else {
+				System.out.println("null");
+			}
 		
-			
 			final Agent<?>[][] holdPopulation = population;
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -156,19 +159,18 @@ public class BaseSimulation implements Simulation {
 }
 
 /*
-Collections.sort(neighbors, new Comparator<Agent>() {
-	@SuppressWarnings("unchecked")
+Collections.sort(neighbors, new Comparator<Agent>() {			
 	@Override
 	public int compare(Agent ag1, Agent ag2) {					
 		if (selectedAgent.interactionProbability(ag1) == selectedAgent.interactionProbability(ag2)) {
-			return 2 * Agent.random.nextInt(2) - 1;
+			return 0;
 		}
 		else {
 			if (selectedAgent.interactionProbability(ag1) > selectedAgent.interactionProbability(ag2)) {
-				return -1;
+				return 1;
 			}
 			else {
-				return 1;
+				return -1;
 			}
 		}
 	}
