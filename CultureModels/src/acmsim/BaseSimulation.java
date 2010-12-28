@@ -1,10 +1,6 @@
 package acmsim;
 import gui.MainInterface;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,45 +9,16 @@ import java.util.List;
 import javax.swing.SwingUtilities;
 
 import acm.Agent;
-import acm.SimpleAgent;
 
-public class Simulations {
-	private static MainInterface mainInterface;
+public class BaseSimulation implements Simulation {
+	private MainInterface mainInterface;
 	
-	public static Agent<?>[][] loadPopulation(String filename) {
-		Agent<?>[][] population = null;
-		BufferedReader br;
-		
-		try {
-			br = new BufferedReader(new FileReader(filename));
-			int n = Integer.parseInt(br.readLine().trim());
-			int f = Integer.parseInt(br.readLine().trim());
-
-			population = new SimpleAgent[n][n];
-
-			for (int i = 0; i < n; i++) {
-				String[] individuals = br.readLine().split(" ");
-				
-				for (int j = 0; j < n; j++) {
-					population[i][j] = new SimpleAgent(f, individuals[j]);
-					population[i][j].setPosX(j);
-					population[i][j].setPosY(i);
-				}
-			}
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return population;
+	public BaseSimulation(MainInterface mainInterface) {
+		this.mainInterface = mainInterface;
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public static List<Agent> getNeighbors(Agent<?> ag, Agent<?>[][] pop) {
+	public List<Agent> getNeighbors(Agent<?> ag, Agent<?>[][] pop) {
 
 		List<Agent> neighbors = new ArrayList<Agent>();
 
@@ -69,29 +36,10 @@ public class Simulations {
 		neighbors.add(pop[(i + 1  + size) % size][j]);
 		neighbors.add(pop[(i + 1  + size) % size][(j + 1 + size) % size]);
 		
-		/*
-		if (i > 0 && j > 0)
-			neighbors.add(pop[i - 1][j - 1]);
-		if (i > 0)
-			neighbors.add(pop[i - 1][j]);
-		if (i > 0 && j < size - 1)
-			neighbors.add(pop[i - 1][j + 1]);
-		if (j > 0)
-			neighbors.add(pop[i][j - 1]);
-		if (j < size - 1)
-			neighbors.add(pop[i][j + 1]);
-		if (i < size - 1 && j > 0)
-			neighbors.add(pop[i + 1][j - 1]);
-		if (i < size - 1)
-			neighbors.add(pop[i + 1][j]);
-		if (i < size - 1 && j < size - 1)
-			neighbors.add(pop[i + 1][j + 1]);
-		*/
-		
 		return neighbors;
 	}
 
-	public static void runSimulation(int numGenerations, Agent<Integer>[][] population) {
+	public void runSimulation(int numGenerations, Agent<?>[][] population) {
 
 		for (int i = 0; i < population.length; i++) {
 			for (int j = 0; j < population.length; j++) {
@@ -154,7 +102,7 @@ public class Simulations {
 		//	}
 		
 			
-			final Agent<Integer>[][] holdPopulation = population;
+			final Agent<?>[][] holdPopulation = population;
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
@@ -176,10 +124,11 @@ public class Simulations {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static double sum(List<Agent> neighbors, Agent selectedAgent, int index){
+	public static double sum(List<Agent> neighbors, Agent selectedAgent, int index) {
 		double sum = 0.0;
-		for(int i = 0;i < index; i++)
+		for(int i = 0; i < index; i++) {
 			sum += selectedAgent.interactionProbability(neighbors.get(i));
+		}
 		
 		return sum;
 	}
@@ -187,9 +136,9 @@ public class Simulations {
 	@SuppressWarnings("unchecked")
 	public static double sumAll(List<Agent> neighbors, Agent selectedAgent){
 		double sum = 0.0;
-		for(int i = 0;i < neighbors.size(); i++)
+		for(int i = 0; i < neighbors.size(); i++) {
 			sum += selectedAgent.interactionProbability(neighbors.get(i));
-		
+		}
 		return sum;
 	}
 	
@@ -202,24 +151,6 @@ public class Simulations {
 		}
 		
 		System.out.println();
-	}
-	
-	/**
-	 * @param args
-	 */
-	@SuppressWarnings("unchecked")
-	public static void main(String[] args) {
-		Agent[][] pop = loadPopulation("files/population1.txt");
-		mainInterface = new MainInterface(pop);
-		
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				mainInterface.setVisible(true);
-			}
-		});
-		
-		//runSimulation(5000, pop);
 	}
 
 }

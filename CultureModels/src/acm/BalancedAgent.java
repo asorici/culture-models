@@ -9,6 +9,10 @@ public class BalancedAgent extends Agent<Integer> {
 		super(nFeatures, featureString);
 		splitIndex = 2 * nFeatures / 3;
 		
+		for (int i = 0; i < featureString.length(); i++) {
+			features.add(Integer.valueOf(featureString.substring(i, i + 1)));
+		}
+		
 		update();
 	}
 
@@ -20,7 +24,7 @@ public class BalancedAgent extends Agent<Integer> {
 		int neighborConsistencyDiff = Math.abs(neighbor.getExteriorConsistencySum() - neighbor.getInteriorConsistencySum());
 		
 		if (neighborConsistencyDiff < consistencyDiff) {
-			return 1;
+			return consistencyDiff - neighborConsistencyDiff;
 		}
 		
 		return 0;
