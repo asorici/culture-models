@@ -24,12 +24,12 @@ public abstract class Agent<T> {
 	}
 
 	public void interactWith(Agent<T> ag) {
-
 		ArrayList<Integer> indexes = new ArrayList<Integer>();
-
-		for (int i = 0; i < nFeatures; i++)
-			if (!features.get(i).equals(ag.features.get(i)))
+		for (int i = 0; i < nFeatures; i++) {
+			if (!features.get(i).equals(ag.features.get(i))) {
 				indexes.add(i);
+			}
+		}
 
 		if (!indexes.isEmpty()) {
 			int i = indexes.get(random.nextInt(indexes.size()));
@@ -41,9 +41,11 @@ public abstract class Agent<T> {
 	public int numberOfMatchingFeatures(Agent<T> ag) {
 
 		int nrMatches = 0;
-		for (int i = 0; i < nFeatures; i++)
-			if (features.get(i).equals(ag.features.get(i)))
+		for (int i = 0; i < nFeatures; i++) {
+			if (features.get(i).equals(ag.features.get(i))) {
 				nrMatches++;
+			}
+		}
 
 		return nrMatches;
 	}
@@ -94,5 +96,4 @@ public abstract class Agent<T> {
 		return info;
 	}
 
-	
 }
