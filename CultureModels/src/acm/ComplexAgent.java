@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class ComplexAgent extends Agent<Integer> {
 
-	static final int MAX_FEATURES = 10;
+	static final int MAX_FEATURES = 7;
 
 	private int splitIndex;
 	private int exteriorConsistencySum = 0;
@@ -71,7 +71,8 @@ public class ComplexAgent extends Agent<Integer> {
 
 				double threshold = Agent.random.nextDouble();
 
-				if ((iExt + 1) / sum(extIndexes) > threshold)
+				System.out.println("iExt = " + iExt);
+				//if ((iExt + 1) / sum(extIndexes) > threshold)
 					features.set(iExt, ag.features.get(iExt));
 			}
 
@@ -81,7 +82,8 @@ public class ComplexAgent extends Agent<Integer> {
 
 				double threshold = Agent.random.nextDouble();
 
-				if (iInt / sum(intIndexes) > threshold)
+				System.out.println("iInt = " + iInt);
+				//if (iInt / sum(intIndexes) > threshold)
 					features.set(iInt, ag.features.get(iInt));
 			}
 		}
@@ -124,23 +126,24 @@ public class ComplexAgent extends Agent<Integer> {
 
 		double nr = Agent.random.nextDouble();
 
-		for (int i = 0; i < indexes.size() - 1; i++) {
+		for (int i = 0; i < indexes.size(); i++) {
 			double low = probSum(probabilities, i);
 			double high = probSum(probabilities, i + 1);
 
-			if (low < nr && nr < high) {
+			if (low <= nr && nr < high) {
 				selectedIndex = indexes.get(i);
 				break;
 			}
 		}
+		
 		return selectedIndex;
 
 	}
 
 	private double probSum(List<Double> prob, int i) {
 		double s = 0.0;
-		for (Double d : prob)
-			s += d;
+		for (int k = 0; k < i; k++)
+			s += prob.get(k);
 
 		return s;
 	}
