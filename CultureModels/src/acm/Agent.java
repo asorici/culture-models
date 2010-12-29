@@ -61,8 +61,6 @@ public abstract class Agent<T> {
 	
 	@SuppressWarnings("unchecked")
 	public List<Agent> getNeighbors() {
-		// sort agents
-		
 		return neighbors;
 	}
 	
