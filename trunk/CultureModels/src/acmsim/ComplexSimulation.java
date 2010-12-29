@@ -91,12 +91,12 @@ public class ComplexSimulation implements Simulation {
 			// randomly select an individual for interaction
 			int y = Agent.random.nextInt(population.length);
 			int x = Agent.random.nextInt(population.length);
-
+			
 			final Agent selectedAgent = population[y][x];
-
+			
 			// rank agent's neighbors according to their interaction probability
 			List<Agent> neighbors = selectedAgent.getNeighbors();
-
+			
 			System.out.println(neighbors);
 			for (int k = 0; k < neighbors.size(); k++) {
 				Agent ag = neighbors.get(k);
@@ -110,41 +110,51 @@ public class ComplexSimulation implements Simulation {
 			Agent selectedNeighbor = null;
 			
 			List<Agent> bigNeighbors = new ArrayList<Agent>();
-
-			for(Agent n:neighbors)
-				if(n.getFeatures().size() > selectedAgent.getFeatures().size())
+			for(Agent n:neighbors) {
+				if(n.getFeatures().size() > selectedAgent.getFeatures().size()) {
 					bigNeighbors.add(n);
+				}
+			}
 			
-			double nr = Agent.random.nextDouble();
-			
-			if(nr < NEW_FEATURE_ATTRACTION_THRESHOLD  && !bigNeighbors.isEmpty())		
+			if (((ComplexAgent)selectedAgent).getExteriorConsistencySum() == ((ComplexAgent)selectedAgent).getInteriorConsistencySum()) {
+				if (!bigNeighbors.isEmpty()) {
 					selectedNeighbor = bigNeighbors.get(Agent.random.nextInt(bigNeighbors.size()));
-			
-			else{
-				
-				for (int i = 0; i < neighbors.size(); i++) 
-				{
-					Agent crtNeighbor = neighbors.get(i);
-					double lowThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor)) / sumAll(neighbors, selectedAgent);
-					double highThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor) + 1) / sumAll(neighbors, selectedAgent);
-	
-					if (interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
+					System.out.println(selectedNeighbor);
+					selectedAgent.interactWith(selectedNeighbor); 	// we might not be able to
+					selectedAgent.update(); 						// interact with any neighbor
+				}
+			}
+			else {
+				double nr = Agent.random.nextDouble();
+				if(nr < NEW_FEATURE_ATTRACTION_THRESHOLD  && !bigNeighbors.isEmpty()) {		
+					selectedNeighbor = bigNeighbors.get(Agent.random.nextInt(bigNeighbors.size()));
+				}
+				else{
+					
+					for (int i = 0; i < neighbors.size(); i++) 
 					{
-						selectedNeighbor = crtNeighbor;
-						break;
-					}
-				}			
+						Agent crtNeighbor = neighbors.get(i);
+						double lowThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor)) / sumAll(neighbors, selectedAgent);
+						double highThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor) + 1) / sumAll(neighbors, selectedAgent);
+						
+						if (interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
+						{
+							selectedNeighbor = crtNeighbor;
+							break;
+						}
+					}			
+				}
+				
+				double interactionThreshold = Agent.random.nextDouble();
+				if (selectedNeighbor != null && (selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold)) {
+					System.out.println(selectedNeighbor);
+					selectedAgent.interactWith(selectedNeighbor); 	// we might not be able to
+					selectedAgent.update(); 						// interact with any neighbor
+				} else {
+					System.out.println("null");
+				}
 			}
 			
-			double interactionThreshold = Agent.random.nextDouble();
-			if (selectedNeighbor != null && selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
-				System.out.println(selectedNeighbor);
-				selectedAgent.interactWith(selectedNeighbor); 	// we might not be able to
-				selectedAgent.update(); 						// interact with any neighbor
-			} else {
-				System.out.println("null");
-			}
-
 			final Agent<?>[][] holdPopulation = population;
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
