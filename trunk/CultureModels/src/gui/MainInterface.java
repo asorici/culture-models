@@ -359,8 +359,6 @@ public class MainInterface extends JFrame implements ActionListener {
 	
 	public static void main(String[] args) {
 		
-		//Agent[][] pop = loadPopulation("files/population1.txt");
-		//mainInterface = new MainInterface(pop);
 		final MainInterface mainInterface = new MainInterface();
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -368,7 +366,5 @@ public class MainInterface extends JFrame implements ActionListener {
 				mainInterface.setVisible(true);
 			}
 		});
-		
-		//runSimulation(5000, pop);
 	}
 }

@@ -100,4 +100,32 @@ public abstract class Agent<T> {
 		return info;
 	}
 
+	@Override
+	public int hashCode() {
+		String str = toString();
+		return str.hashCode();
+	}
+	
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Agent<?>)) {
+			return false;
+		}
+		
+		final Agent<T> otherAg = (Agent<T>)obj;
+		
+		if (features.size() != otherAg.getFeatures().size()) {
+			return false;
+		}
+		
+		for(int i = 0; i < features.size(); i++) {
+			T myFeat = features.get(i);
+			T otherFeat = otherAg.getFeatures().get(i);
+			
+			if (!myFeat.equals(otherFeat)) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
 }
