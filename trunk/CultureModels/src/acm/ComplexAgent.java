@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 public class ComplexAgent extends Agent<Integer> {
+
+	static final int MAX_FEATURES = 10;
+
 	private int splitIndex;
 	private int exteriorConsistencySum = 0;
 	private int interiorConsistencySum = 0;
@@ -25,8 +28,8 @@ public class ComplexAgent extends Agent<Integer> {
 	@Override
 	public double interactionProbability(Agent<Integer> ag) {
 		ComplexAgent neighbor = (ComplexAgent) ag;
-		
-		if(neighbor.nFeatures < nFeatures) // no interaction
+
+		if (neighbor.nFeatures < nFeatures) // no interaction
 			return 0;
 
 		int consistencyDiff = Math.abs(exteriorConsistencySum
@@ -69,13 +72,21 @@ public class ComplexAgent extends Agent<Integer> {
 			if (!extIndexes.isEmpty()) {
 				int iExt;
 				iExt = selectFeatureToCopy(extIndexes);
-				features.set(iExt, ag.features.get(iExt));
+
+				double threshold = Agent.random.nextDouble();
+
+				if ((iExt + 1) / sum(extIndexes) > threshold)
+					features.set(iExt, ag.features.get(iExt));
 			}
 
 			if (!intIndexes.isEmpty()) {
 				int iInt;
 				iInt = selectFeatureToCopy(intIndexes);
-				features.set(iInt, ag.features.get(iInt));
+
+				double threshold = Agent.random.nextDouble();
+
+				if (iInt / sum(intIndexes) > threshold)
+					features.set(iInt, ag.features.get(iInt));
 			}
 		}
 
@@ -88,35 +99,41 @@ public class ComplexAgent extends Agent<Integer> {
 					.get(neighbor.splitIndex - 1));
 			features.add(neighbor.features.get(agSize - 1));
 
-		
+			nFeatures = features.size();
+			splitIndex++;
 		} else {
 			// do nothing
 		}
 	}
 
+	private int sum(ArrayList<Integer> extIndexes) {
+		int s = 0;
+		for (Integer i : extIndexes)
+			s += (i + 1);
+		return s;
+	}
+
 	// roulette selection of feature
 	private int selectFeatureToCopy(List<Integer> indexes) {
-		
+
 		int selectedIndex = 0;
-		
+
 		List<Double> probabilities = new ArrayList<Double>();
 
 		double s = 0.0;
 		for (Integer i : indexes)
 			s += (i + 1);
-		
-		for(Integer i: indexes)
-			probabilities.add(((double)(i+1))/s);
-			
+
+		for (Integer i : indexes)
+			probabilities.add(((double) (i + 1)) / s);
+
 		double nr = Agent.random.nextDouble();
-		
-		for(int i=0;i<indexes.size()-1;i++)
-		{
-			double low = sum(probabilities,i);
-			double high = sum(probabilities, i+1);
-		
-			if(low < nr && nr < high)
-			{
+
+		for (int i = 0; i < indexes.size() - 1; i++) {
+			double low = probSum(probabilities, i);
+			double high = probSum(probabilities, i + 1);
+
+			if (low < nr && nr < high) {
 				selectedIndex = indexes.get(i);
 				break;
 			}
@@ -125,19 +142,17 @@ public class ComplexAgent extends Agent<Integer> {
 
 	}
 
-	private double sum(List<Double> prob, int i) {
+	private double probSum(List<Double> prob, int i) {
 		double s = 0.0;
-		for(Double d: prob)
+		for (Double d : prob)
 			s += d;
-		
-		return s;			
+
+		return s;
 	}
 
 	@Override
 	public void update() {
-		
-		nFeatures = features.size();
-		splitIndex = 2 * nFeatures / 3;
+
 		exteriorConsistencySum = 0;
 		interiorConsistencySum = 0;
 
@@ -170,6 +185,21 @@ public class ComplexAgent extends Agent<Integer> {
 
 	public int getSplitIndex() {
 		return splitIndex;
+	}
+
+	public void technologicalChange() {
+
+		if (nFeatures < MAX_FEATURES) {
+			int extValue = Agent.random.nextInt(10);
+			int intValue = Agent.random.nextInt(10);
+
+			features.add(splitIndex, extValue);
+			features.add(intValue);
+
+			nFeatures = features.size();
+			splitIndex++;
+		}
+
 	}
 
 }
