@@ -32,18 +32,14 @@ public class ComplexAgent extends Agent<Integer> {
 		if (neighbor.nFeatures < nFeatures) // no interaction
 			return 0;
 
-		int consistencyDiff = Math.abs(exteriorConsistencySum
-				- interiorConsistencySum);
-		int neighborConsistencyDiff = Math.abs(neighbor
-				.getExteriorConsistencySum()
-				- neighbor.getInteriorConsistencySum());
+		int consistencyDiff = Math.abs(exteriorConsistencySum - interiorConsistencySum);
+		int neighborConsistencyDiff = Math.abs(neighbor.getExteriorConsistencySum() - neighbor.getInteriorConsistencySum());
 
 		if (neighborConsistencyDiff < consistencyDiff) {
 			return consistencyDiff - neighborConsistencyDiff;
 		}
 
 		return 0;
-
 	}
 
 	@Override
@@ -95,8 +91,7 @@ public class ComplexAgent extends Agent<Integer> {
 
 			ComplexAgent neighbor = (ComplexAgent) ag;
 
-			features.add(splitIndex, neighbor.features
-					.get(neighbor.splitIndex - 1));
+			features.add(splitIndex, neighbor.features.get(neighbor.splitIndex - 1));
 			features.add(neighbor.features.get(agSize - 1));
 
 			nFeatures = features.size();

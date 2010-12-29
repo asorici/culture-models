@@ -31,8 +31,10 @@ import javax.swing.SwingWorker;
 
 import acm.Agent;
 import acm.BalancedAgent;
+import acm.ComplexAgent;
 import acm.SimpleAgent;
 import acmsim.BaseSimulation;
+import acmsim.ComplexSimulation;
 import acmsim.Simulation;
 
 public class MainInterface extends JFrame implements ActionListener {
@@ -261,7 +263,29 @@ public class MainInterface extends JFrame implements ActionListener {
 		if (evt.getActionCommand().equalsIgnoreCase("complexagent")) {
 			synchronized(simRunning) {
 				if (!simRunning) {
-					
+					int returnVal = fc.showOpenDialog(this);
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+			            String filename = fc.getSelectedFile().getAbsolutePath();
+						
+			            population = loadPopulation(filename, ComplexAgent.class);
+			            if (population != null) {
+			            	simulation = new ComplexSimulation(this);
+			            }
+			            else {
+			            	simulation = null;
+			            }
+						
+			            simProgressDisplayArea.setText(printPopulation(population));
+			    		simProgressDisplayArea.repaint();
+			    		
+			    		simCanvas.setAgentPopulation(population);
+			    		simCanvas.repaint();
+			            
+						agentTypeLabel.setText("Complex Agent");
+						simulationTypeLabel.setText("Complex Sim");
+						agentTypeLabel.repaint();
+						simulationTypeLabel.repaint();
+					}
 				}
 			}
 		}

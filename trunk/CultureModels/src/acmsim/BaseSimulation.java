@@ -66,20 +66,19 @@ public class BaseSimulation implements Simulation {
 				System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
 			}
 			System.out.println();
-			
-					
+				
 			double interactionSelection = Agent.random.nextDouble();
 			
 			// pick neighbor to interact with
 			Agent selectedNeighbor = null;
 			
-			for(int i = 0; i < neighbors.size(); i++)
+			for (int i = 0; i < neighbors.size(); i++)
 			{
 				Agent crtNeighbor = neighbors.get(i);
-				double lowThreshold = sum(neighbors,selectedAgent,neighbors.indexOf(crtNeighbor)) / sumAll(neighbors,selectedAgent);
-				double highThreshold = sum(neighbors,selectedAgent,neighbors.indexOf(crtNeighbor) + 1)/ sumAll(neighbors, selectedAgent);
+				double lowThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor)) / sumAll(neighbors,selectedAgent);
+				double highThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor) + 1) / sumAll(neighbors, selectedAgent);
 			
-				if(interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
+				if (interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
 				{
 					selectedNeighbor = crtNeighbor;
 					break;
