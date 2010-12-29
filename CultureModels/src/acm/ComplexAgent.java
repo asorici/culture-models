@@ -62,7 +62,7 @@ public class ComplexAgent extends Agent<Integer> {
 					extIndexes.add(i);
 
 			for (int i = splitIndex; i < mySize; i++)
-				if (!features.get(i).equals(ag.features.get(i)))
+				//if (!features.get(i).equals(ag.features.get(i)))
 					intIndexes.add(i);
 
 			if (!extIndexes.isEmpty()) {
@@ -72,7 +72,7 @@ public class ComplexAgent extends Agent<Integer> {
 				double threshold = Agent.random.nextDouble();
 
 				System.out.println("iExt = " + iExt);
-				if ((iExt + 1) / sum(extIndexes) > threshold)
+				//if ((iExt + 1) / sum(extIndexes) > threshold)
 					features.set(iExt, ag.features.get(iExt));
 			}
 
@@ -83,7 +83,7 @@ public class ComplexAgent extends Agent<Integer> {
 				double threshold = Agent.random.nextDouble();
 
 				System.out.println("iInt = " + iInt);
-				if (iInt / sum(intIndexes) > threshold)
+				//if (iInt / sum(intIndexes) > threshold)
 					features.set(iInt, ag.features.get(iInt));
 			}
 		}
