@@ -48,8 +48,7 @@ public class ComplexSimulation implements Simulation {
 
 		for (int i = 0; i < population.length; i++) {
 			for (int j = 0; j < population.length; j++) {
-				population[i][j].setNeighbors(getNeighbors(population[i][j],
-						population));
+				population[i][j].setNeighbors(getNeighbors(population[i][j], population));
 			}
 		}
 
@@ -57,36 +56,36 @@ public class ComplexSimulation implements Simulation {
 		while (gen < numGenerations) {
 			System.out.println("gen: " + gen);
 
-			// select individual for technological change
-			int corner = Agent.random.nextInt(4);
-
-			int xc = 1, yc = 1;
-
-			switch (corner % 4) {
-			case 0: // upper left
-				xc = Agent.random.nextInt(REGION);
-				yc = Agent.random.nextInt(REGION);
-				break;
-			case 1: // lower left
-				xc = Agent.random.nextInt(REGION);
-				yc = population.length - 1 - Agent.random.nextInt(REGION);
-				break;
-			case 2: // upper right
-				xc = population.length - 1 - Agent.random.nextInt(REGION);
-				yc = Agent.random.nextInt(REGION);
-				break;
-			case 3: // lower right
-				xc = population.length - 1 - Agent.random.nextInt(REGION);
-				yc = population.length - 1 - Agent.random.nextInt(REGION);
-				break;
-			default:
-				break;
+			if (gen >= CHANGE_PERIOD && gen % CHANGE_PERIOD == 0) {
+				
+				// select individual for technological change
+				int corner = Agent.random.nextInt(4);
+				int xc = 1, yc = 1;
+				
+				switch (corner % 4) {
+					case 0: // upper left
+						xc = Agent.random.nextInt(REGION);
+						yc = Agent.random.nextInt(REGION);
+						break;
+					case 1: // lower left
+						xc = Agent.random.nextInt(REGION);
+						yc = population.length - 1 - Agent.random.nextInt(REGION);
+						break;
+					case 2: // upper right
+						xc = population.length - 1 - Agent.random.nextInt(REGION);
+						yc = Agent.random.nextInt(REGION);
+						break;
+					case 3: // lower right
+						xc = population.length - 1 - Agent.random.nextInt(REGION);
+						yc = population.length - 1 - Agent.random.nextInt(REGION);
+						break;
+					default:
+						break;
+				}
+				
+				ComplexAgent changingAgent = (ComplexAgent)population[yc][xc];
+				changingAgent.technologicalChange();
 			}
-			
-			ComplexAgent changingAgent = (ComplexAgent)population[yc][xc];
-			
-			changingAgent.technologicalChange();
-			
 
 			// randomly select an individual for interaction
 			int y = Agent.random.nextInt(population.length);
@@ -100,8 +99,7 @@ public class ComplexSimulation implements Simulation {
 			System.out.println(neighbors);
 			for (int k = 0; k < neighbors.size(); k++) {
 				Agent ag = neighbors.get(k);
-				System.out.printf("%6.2f ", selectedAgent
-						.interactionProbability(ag));
+				System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
 			}
 			System.out.println();
 
@@ -110,29 +108,24 @@ public class ComplexSimulation implements Simulation {
 			// pick neighbor to interact with
 			Agent selectedNeighbor = null;
 
-			for (int i = 0; i < neighbors.size(); i++) {
+			for (int i = 0; i < neighbors.size(); i++) 
+			{
 				Agent crtNeighbor = neighbors.get(i);
-				double lowThreshold = sum(neighbors, selectedAgent, neighbors
-						.indexOf(crtNeighbor))
-						/ sumAll(neighbors, selectedAgent);
-				double highThreshold = sum(neighbors, selectedAgent, neighbors
-						.indexOf(crtNeighbor) + 1)
-						/ sumAll(neighbors, selectedAgent);
+				double lowThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor)) / sumAll(neighbors, selectedAgent);
+				double highThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor) + 1) / sumAll(neighbors, selectedAgent);
 
-				if (interactionSelection >= lowThreshold
-						&& interactionSelection < highThreshold) {
+				if (interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
+				{
 					selectedNeighbor = crtNeighbor;
 					break;
 				}
 			}
 
 			double interactionThreshold = Agent.random.nextDouble();
-			if (selectedNeighbor != null
-					&& selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
+			if (selectedNeighbor != null && selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
 				System.out.println(selectedNeighbor);
-				selectedAgent.interactWith(selectedNeighbor); // we might not be
-				// able to
-				selectedAgent.update(); // interact with any neighbor
+				selectedAgent.interactWith(selectedNeighbor); 	// we might not be able to
+				selectedAgent.update(); 						// interact with any neighbor
 			} else {
 				System.out.println("null");
 			}
