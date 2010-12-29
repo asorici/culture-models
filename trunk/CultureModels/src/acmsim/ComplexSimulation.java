@@ -14,7 +14,7 @@ import acm.ComplexAgent;
 public class ComplexSimulation implements Simulation {
 
 	private static final int REGION = 3;
-	static final int CHANGE_PERIOD = 100;
+	static final int CHANGE_PERIOD = 1000;
 
 	private MainInterface mainInterface;
 
