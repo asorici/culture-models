@@ -13,6 +13,7 @@ import acm.ComplexAgent;
 
 public class ComplexSimulation implements Simulation {
 
+	private static final double NEW_FEATURE_ATTRACTION_THRESHOLD = 0.8;
 	private static final int REGION = 3;
 	static final int CHANGE_PERIOD = 1000;
 
@@ -107,20 +108,34 @@ public class ComplexSimulation implements Simulation {
 
 			// pick neighbor to interact with
 			Agent selectedNeighbor = null;
+			
+			List<Agent> bigNeighbors = new ArrayList<Agent>();
 
-			for (int i = 0; i < neighbors.size(); i++) 
-			{
-				Agent crtNeighbor = neighbors.get(i);
-				double lowThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor)) / sumAll(neighbors, selectedAgent);
-				double highThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor) + 1) / sumAll(neighbors, selectedAgent);
-
-				if (interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
+			for(Agent n:neighbors)
+				if(n.getFeatures().size() > selectedAgent.getFeatures().size())
+					bigNeighbors.add(n);
+			
+			double nr = Agent.random.nextDouble();
+			
+			if(nr < NEW_FEATURE_ATTRACTION_THRESHOLD  && !bigNeighbors.isEmpty())		
+					selectedNeighbor = bigNeighbors.get(Agent.random.nextInt(bigNeighbors.size()));
+			
+			else{
+				
+				for (int i = 0; i < neighbors.size(); i++) 
 				{
-					selectedNeighbor = crtNeighbor;
-					break;
-				}
+					Agent crtNeighbor = neighbors.get(i);
+					double lowThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor)) / sumAll(neighbors, selectedAgent);
+					double highThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor) + 1) / sumAll(neighbors, selectedAgent);
+	
+					if (interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
+					{
+						selectedNeighbor = crtNeighbor;
+						break;
+					}
+				}			
 			}
-
+			
 			double interactionThreshold = Agent.random.nextDouble();
 			if (selectedNeighbor != null && selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
 				System.out.println(selectedNeighbor);
