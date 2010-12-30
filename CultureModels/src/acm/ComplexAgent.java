@@ -1,13 +1,13 @@
 package acm;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ComplexAgent extends Agent<Integer> {
 
-	static final int MAX_FEATURES = 7;
+	static final int MAX_FEATURES = 9;
+	static final double HIGH_FEATURE_PROB = 0.9;
+	static final double LOW_FEATURE_PROB = 0.3;
 
 	private int splitIndex;
 	private int exteriorConsistencySum = 0;
@@ -68,23 +68,23 @@ public class ComplexAgent extends Agent<Integer> {
 			if (!extIndexes.isEmpty()) {
 				int iExt;
 				iExt = selectFeatureToCopy(extIndexes);
-
+				
 				double threshold = Agent.random.nextDouble();
-
-				System.out.println("iExt = " + iExt);
 				//if ((iExt + 1) / sum(extIndexes) > threshold)
+				if (getChangeProbability(extIndexes, iExt) > threshold) {
 					features.set(iExt, ag.features.get(iExt));
+				}
 			}
-
+			
 			if (!intIndexes.isEmpty()) {
 				int iInt;
 				iInt = selectFeatureToCopy(intIndexes);
-
+				
 				double threshold = Agent.random.nextDouble();
-
-				System.out.println("iInt = " + iInt);
 				//if (iInt / sum(intIndexes) > threshold)
+				if (getChangeProbability(intIndexes, iInt) > threshold) {
 					features.set(iInt, ag.features.get(iInt));
+				}
 			}
 		}
 
@@ -197,7 +197,25 @@ public class ComplexAgent extends Agent<Integer> {
 			nFeatures = features.size();
 			splitIndex++;
 		}
-
+	}
+	
+	private double getChangeProbability(List<Integer> indexes, int selIndex) {
+		int size = indexes.size();
+		if (size == 1) {
+			return HIGH_FEATURE_PROB;
+		}
+		
+		double ration = (HIGH_FEATURE_PROB - LOW_FEATURE_PROB) / (double) (size - 1);
+		int minIndex = indexes.get(0);
+		for (int i = 1; i < size; i++) {
+			if (indexes.get(i) < minIndex) {
+				minIndex = indexes.get(i);
+			}
+		}
+		
+		int progressionIndex = selIndex - minIndex;
+		
+		return LOW_FEATURE_PROB + progressionIndex * ration;
 	}
 
 }

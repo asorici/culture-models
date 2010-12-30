@@ -15,7 +15,7 @@ public class ComplexSimulation implements Simulation {
 
 	private static final double NEW_FEATURE_ATTRACTION_THRESHOLD = 0.8;
 	private static final int REGION = 3;
-	static final int CHANGE_PERIOD = 1000;
+	static final int CHANGE_PERIOD = 2000;
 
 	private MainInterface mainInterface;
 
