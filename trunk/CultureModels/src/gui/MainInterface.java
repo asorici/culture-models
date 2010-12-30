@@ -370,7 +370,7 @@ public class MainInterface extends JFrame implements ActionListener {
 		if (population != null) {
 			for (int i = 0; i < population.length; i++) {
 				for (int j = 0; j < population.length; j++) {
-					info += population[i][j].toString() + "  ";
+					info += population[i][j].toString() + "        ";
 				}
 				info += "\n";
 			}
