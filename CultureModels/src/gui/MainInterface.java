@@ -189,7 +189,7 @@ public class MainInterface extends JFrame implements ActionListener {
 		JPanel currentGenPanel = new JPanel();
 		JLabel genInfoLabel = new JLabel("currentGen:");
 		currentGenPanel.add(genInfoLabel);
-		currentGenPanel.add(currentGenPanel);
+		currentGenPanel.add(currentGenLabel);
 		
 		controlPanel.add(selectionLabelPanel);
 		controlPanel.add(runDataPanel);
