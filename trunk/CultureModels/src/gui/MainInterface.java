@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -28,6 +29,14 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.general.Dataset;
+import org.jfree.data.general.DefaultPieDataset;
 
 import acm.Agent;
 import acm.BalancedAgent;
@@ -65,17 +74,44 @@ public class MainInterface extends JFrame implements ActionListener {
 	private SimulationCanvas simCanvas;
 	private Boolean simRunning = new Boolean(false);
 	
+	// stat graphs data
+	private JFrame chartFrame;
+	Dataset[] regionsPerFeatureVal;
+	DefaultPieDataset globalHomogeneityMeasure;
+	DefaultCategoryDataset localHomogeneityMeasure;
+	
 	public MainInterface() {
 		simCanvas = new SimulationCanvas();
 		initGraphics();
+		initChartGraphics();
 	}
-	
+
 	public MainInterface(Agent<Integer>[][] population) {
 		this();
 		this.population = population;
 		this.simCanvas.setAgentPopulation(population);
 	}
 
+	private void initChartGraphics() {
+		JFrame chartFrame = new JFrame("Simulation stats");
+		setLayout(new GridLayout(2, 1));
+		setSize(900, 600);
+		
+		globalHomogeneityMeasure = new DefaultPieDataset();
+		localHomogeneityMeasure = new DefaultCategoryDataset();
+		
+		JFreeChart globalHomChart = ChartFactory.createPieChart("Global Homogeneity Measure", globalHomogeneityMeasure, true, true, true);
+		JFreeChart localHomChart = ChartFactory.createLineChart(
+				"Local Homogeneity Measure", "gen. iter.", "no. of different pairs per feature",
+				localHomogeneityMeasure, PlotOrientation.VERTICAL, true, false, false);
+		
+		JPanel globalHomChartPanel = new ChartPanel(globalHomChart);
+		JPanel localHomChartPanel = new ChartPanel(localHomChart);
+		
+		chartFrame.add(globalHomChartPanel);
+		chartFrame.add(localHomChartPanel);
+	}
+	
 	private void initGraphics() {
 		// frame layout
 		setLayout(new BorderLayout(10, 10));
@@ -389,7 +425,38 @@ public class MainInterface extends JFrame implements ActionListener {
 			@Override
 			public void run() {
 				mainInterface.setVisible(true);
+				mainInterface.getChartFrame().setVisible(true);
 			}
 		});
+	}
+
+	public void setChartFrame(JFrame chartFrame) {
+		this.chartFrame = chartFrame;
+	}
+
+	public JFrame getChartFrame() {
+		return chartFrame;
+	}
+
+	public void updateRegsPerFeatureGraph(HashMap<Integer, Integer> regsPerFeatureVal, int k) {
+		
+	}
+
+	public void updateGlobalHomogeneityGraph(HashMap<Agent<Integer>, Integer> globalHomogeneityMap) {
+		globalHomogeneityMeasure = new DefaultPieDataset();
+		
+		for (Agent<Integer> ag : globalHomogeneityMap.keySet()) {
+			globalHomogeneityMeasure.setValue(ag.toString(), globalHomogeneityMap.get(ag));
+		}
+		
+		//chartFrame.repaint();
+	}
+
+	public void updateLocalHomogeneityGraph(int[] localHomogeneityMap, int genIter) {
+		for (int k = 0; k < localHomogeneityMap.length; k++) {
+			localHomogeneityMeasure.addValue((Number)localHomogeneityMap[k], "feature[" + k + "]", genIter);
+		}
+		
+		//chartFrame.repaint();
 	}
 }
