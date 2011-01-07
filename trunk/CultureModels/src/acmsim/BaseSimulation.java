@@ -11,9 +11,6 @@ import acm.Agent;
 
 public class BaseSimulation extends Simulation {
 	private MainInterface mainInterface;
-	private int currentStableRegionCount = 0;
-	private int prevStableRegionCount = 0;
-	private int reductionFactor = 1;
 	
 	public BaseSimulation(MainInterface mainInterface) {
 		this.mainInterface = mainInterface;
@@ -51,34 +48,55 @@ public class BaseSimulation extends Simulation {
 		
 		gen = 0;
 		while (gen < numGenerations) {
-			System.out.println("gen: " + gen);
+			//System.out.println("gen: " + gen);
 			
-			// take homogeneity measures
+			// global homogeneity measure
+			final HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
+			if (gen == 0) {
+				prevStableRegionCount = globalHomogeneityMap.keySet().size();
+				prevLocalHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
+			}
+			currentStableRegionCount = globalHomogeneityMap.keySet().size();
+			
+			// // localHomogeneity measure
+			localHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
+			
+			if (gen != 0) {
+				boolean noChange = true;
+				for (int k = 0; k < prevLocalHomogeneityMeasure.length; k++) {
+					if (localHomogeneityMeasure[k] != prevLocalHomogeneityMeasure[k]) {
+						noChange = false;
+					}
+				}
+				
+				if (noChange) {
+					noChangeCt++;
+					if (noChangeCt >= noChangeThreshold) {
+						System.out.println("###############################");
+						System.out.println("# Convergence reached already #");
+						System.out.println("###############################");
+						System.out.println("NR_GENS: " + (gen + mainInterface.globalGenerationCount));
+						
+						break;
+					}
+				}
+				else {
+					noChangeCt = 0;
+					for (int k = 0; k < prevLocalHomogeneityMeasure.length; k++) {
+						prevLocalHomogeneityMeasure[k] = localHomogeneityMeasure[k];
+					}
+				}
+			}
+			
+			// display homogeneity measures
 			if (gen % 100 == 0) {
-				// global homogeneity measure
-				final HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
 						mainInterface.updateGlobalHomogeneityGraph(globalHomogeneityMap);
-					}
-				});
-				
-				
-				if (gen == 0) {
-					prevStableRegionCount = globalHomogeneityMap.keySet().size();
-				}
-				currentStableRegionCount = globalHomogeneityMap.keySet().size();
-				
-				// localHomogeneity measure
-				final int[] localHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
 						mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
 					}
 				});
-				
 			}
 			
 			int numInteractingAgents = Simulation.PERCENT_CHANGE * population.length * population.length / 100;
