@@ -186,11 +186,11 @@ public class ComplexAgent extends Agent<Integer> {
 		return splitIndex;
 	}
 
-	public void technologicalChange() {
+	public void technologicalChange(int value) {
 
 		if (nFeatures < MAX_FEATURES) {
 			int extValue = Agent.random.nextInt(10);
-			int intValue = Agent.random.nextInt(10);
+			int intValue = value;
 
 			features.add(splitIndex, extValue);
 			features.add(intValue);
