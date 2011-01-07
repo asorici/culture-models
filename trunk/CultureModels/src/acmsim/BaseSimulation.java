@@ -60,12 +60,12 @@ public class BaseSimulation implements Simulation {
 			// rank agent's neighbors according to their interaction probability
 			List<Agent> neighbors = selectedAgent.getNeighbors();
 			
-			System.out.println(neighbors);
+			//System.out.println(neighbors);
 			for (int k = 0; k < neighbors.size(); k++) {
 				Agent ag = neighbors.get(k);
 				System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
 			}
-			System.out.println();
+			//System.out.println();
 				
 			double interactionSelection = Agent.random.nextDouble();
 			
@@ -96,12 +96,12 @@ public class BaseSimulation implements Simulation {
 			
 			double interactionThreshold = Agent.random.nextDouble();
 			if (selectedNeighbor != null && selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
-				System.out.println(selectedNeighbor);
+				//System.out.println(selectedNeighbor);
 				selectedAgent.interactWith(selectedNeighbor);			// we might not be able to		
 				selectedAgent.update();									// interact with any neighbor
 			}
 			else {
-				System.out.println("null");
+				//System.out.println("null");
 			}
 		
 			final Agent<?>[][] holdPopulation = population;
@@ -147,12 +147,12 @@ public class BaseSimulation implements Simulation {
 	public static void printPopulation(Agent<?>[][] population) {
 		for (int i = 0; i < population.length; i++) {
 			for (int j = 0; j < population.length; j++) {
-				System.out.print(population[i][j].toString() + "  ");
+				//System.out.print(population[i][j].toString() + "  ");
 			}
-			System.out.println();
+			//System.out.println();
 		}
 		
-		System.out.println();
+		//System.out.println();
 	}
 
 }
