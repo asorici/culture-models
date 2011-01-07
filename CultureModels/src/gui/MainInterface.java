@@ -193,6 +193,7 @@ public class MainInterface extends JFrame implements ActionListener {
 		
 		controlPanel.add(selectionLabelPanel);
 		controlPanel.add(runDataPanel);
+		controlPanel.add(currentGenPanel);
 		
 		add(BorderLayout.CENTER, canvasPanel);
 		add(BorderLayout.EAST, controlPanel);
