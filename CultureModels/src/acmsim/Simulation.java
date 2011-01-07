@@ -8,6 +8,7 @@ import acm.ComplexAgent;
 
 public abstract class Simulation {
 	public static final int DELAY = 5;
+	public static final int PERCENT_CHANGE = 10;
 	
 	@SuppressWarnings("unchecked")
 	public abstract List<Agent> getNeighbors(Agent<?> ag, Agent<?>[][] pop);
