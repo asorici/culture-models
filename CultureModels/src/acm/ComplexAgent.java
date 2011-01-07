@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ComplexAgent extends Agent<Integer> {
 
-	static final int MAX_FEATURES = 9;
+	public static final int MAX_FEATURES = 9;
 	static final double HIGH_FEATURE_PROB = 0.9;
 	static final double LOW_FEATURE_PROB = 0.3;
 
@@ -71,6 +71,7 @@ public class ComplexAgent extends Agent<Integer> {
 				
 				double threshold = Agent.random.nextDouble();
 				//if ((iExt + 1) / sum(extIndexes) > threshold)
+				System.out.println(getChangeProbability(extIndexes, iExt) + " vs " + threshold);
 				if (getChangeProbability(extIndexes, iExt) > threshold) {
 					features.set(iExt, ag.features.get(iExt));
 				}

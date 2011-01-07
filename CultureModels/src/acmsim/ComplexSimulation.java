@@ -55,7 +55,7 @@ public class ComplexSimulation implements Simulation {
 
 		int gen = 0;
 		while (gen < numGenerations) {
-		//	System.out.println("gen: " + gen);
+			System.out.println("gen: " + gen);
 
 			if (gen >= CHANGE_PERIOD && gen % CHANGE_PERIOD == 0) {
 				
@@ -88,6 +88,23 @@ public class ComplexSimulation implements Simulation {
 				changingAgent.technologicalChange();
 			}
 
+			// take homogeneity measures
+			if (gen % 100 == 0) {
+				// regions per feature value
+				for (int k = 0; k < population[0][0].getFeatures().size(); k++) {
+					HashMap<Integer, Integer> regsPerFeatureVal = regionsPerFeatureValue((Agent<Integer>[][])population, k);
+					mainInterface.updateRegsPerFeatureGraph(regsPerFeatureVal, k);
+				}
+				
+				// global homogeneity measure
+				HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
+				mainInterface.updateGlobalHomogeneityGraph(globalHomogeneityMap);
+				
+				// localHomogeneity measure
+				int[] localHomogeneityMeasure = localHomogeneityMeasure((ComplexAgent[][])population, ComplexAgent.MAX_FEATURES, (ComplexAgent.MAX_FEATURES + 1) / 2);
+				mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
+			}
+			
 			// randomly select an individual for interaction
 			int y = Agent.random.nextInt(population.length);
 			int x = Agent.random.nextInt(population.length);
@@ -97,13 +114,15 @@ public class ComplexSimulation implements Simulation {
 			// rank agent's neighbors according to their interaction probability
 			List<Agent> neighbors = selectedAgent.getNeighbors();
 			
-		//	System.out.println(neighbors);
+			/*
+			System.out.println(neighbors);			
 			for (int k = 0; k < neighbors.size(); k++) {
 				Agent ag = neighbors.get(k);
-			//	System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
+				System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
 			}
-		//	System.out.println();
-
+			System.out.println();
+			*/
+			
 			double interactionSelection = Agent.random.nextDouble();
 
 			// pick neighbor to interact with
@@ -119,7 +138,7 @@ public class ComplexSimulation implements Simulation {
 			if (((ComplexAgent)selectedAgent).getExteriorConsistencySum() == ((ComplexAgent)selectedAgent).getInteriorConsistencySum()) {
 				if (!bigNeighbors.isEmpty()) {
 					selectedNeighbor = bigNeighbors.get(Agent.random.nextInt(bigNeighbors.size()));
-			//		System.out.println(selectedNeighbor);
+					//System.out.println(selectedNeighbor);
 					selectedAgent.interactWith(selectedNeighbor); 	// we might not be able to
 					selectedAgent.update(); 						// interact with any neighbor
 				}
@@ -147,11 +166,11 @@ public class ComplexSimulation implements Simulation {
 				
 				double interactionThreshold = Agent.random.nextDouble();
 				if (selectedNeighbor != null && (selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold)) {
-			//		System.out.println(selectedNeighbor);
+					//System.out.println(selectedNeighbor);
 					selectedAgent.interactWith(selectedNeighbor); 	// we might not be able to
 					selectedAgent.update(); 						// interact with any neighbor
 				} else {
-			//		System.out.println("null");
+					//System.out.println("null");
 				}
 			}
 			
@@ -173,7 +192,7 @@ public class ComplexSimulation implements Simulation {
 			gen++;
 		}
 
-	//	printPopulation(population);
+		printPopulation(population);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -207,16 +226,13 @@ public class ComplexSimulation implements Simulation {
 		System.out.println();
 	}
 
-	public HashMap<Integer, Integer> regionsPerFeatureValue(
-			Agent<Integer>[][] population, int featureIndex) {
+	public HashMap<Integer, Integer> regionsPerFeatureValue(Agent<Integer>[][] population, int featureIndex) {
 		HashMap<Integer, Integer> regionsPerFeatureVal = new HashMap<Integer, Integer>();
 		for (int i = 0; i < population.length; i++) {
 			for (int j = 0; j < population.length; j++) {
 				if (population[i][j].getFeatures().size() > featureIndex) {
-					int featureVal = population[i][j].getFeatures().get(
-							featureIndex);
-					Integer existingCount = regionsPerFeatureVal
-							.get(featureVal);
+					int featureVal = population[i][j].getFeatures().get(featureIndex);
+					Integer existingCount = regionsPerFeatureVal.get(featureVal);
 					if (existingCount == null) {
 						regionsPerFeatureVal.put(featureVal, 1);
 					} else {
@@ -230,8 +246,7 @@ public class ComplexSimulation implements Simulation {
 	}
 
 	// globalHomogeneityMeasure - nrOfRegions even if unstable
-	public HashMap<Agent<Integer>, Integer> globalHomogeneityMeasure(
-			Agent<Integer>[][] population) {
+	public HashMap<Agent<Integer>, Integer> globalHomogeneityMeasure(Agent<Integer>[][] population) {
 		HashMap<Agent<Integer>, Integer> homogeneousRegions = new HashMap<Agent<Integer>, Integer>();
 
 		for (int i = 0; i < population.length; i++) {
@@ -252,8 +267,7 @@ public class ComplexSimulation implements Simulation {
 
 	// localHomogeneityMeasure - number of pairs that had any differences (in
 	// this case inconsistency)
-	public int[] localHomogeneityMeasure(ComplexAgent[][] population,
-			int nrFeatures, int splitIndex) {
+	public int[] localHomogeneityMeasure(ComplexAgent[][] population, int nrFeatures, int splitIndex) {
 		int[] nrNeighborDiffs = new int[nrFeatures];
 		for (int k = 0; k < nrNeighborDiffs.length; k++) {
 			nrNeighborDiffs[k] = 0;
@@ -268,41 +282,33 @@ public class ComplexSimulation implements Simulation {
 					ComplexAgent neighborAgent = (ComplexAgent) neighbor;
 
 					// if the agents have different feature sizes
-					if (ag.getFeatures().size() != neighborAgent.getFeatures()
-							.size()) {
+					if (ag.getFeatures().size() != neighborAgent.getFeatures().size()) {
 						ComplexAgent minAgent = ag;
 						ComplexAgent otherAgent = neighborAgent;
-						if (neighborAgent.getFeatures().size() < ag
-								.getFeatures().size()) {
+						if (neighborAgent.getFeatures().size() < ag.getFeatures().size()) {
 							minAgent = neighborAgent;
 							otherAgent = ag;
 						}
 
 						// compare up to splitIndex
 						for (int k = 0; k < minAgent.getSplitIndex(); k++) {
-							if (!minAgent.getFeatures().get(k).equals(
-									otherAgent.getFeatures().get(k))) {
+							if (!minAgent.getFeatures().get(k).equals(otherAgent.getFeatures().get(k))) {
 								nrNeighborDiffs[k]++;
 							}
 						}
 
 						// compare from splitIndex onwards
-						for (int k = minAgent.getSplitIndex(); k < minAgent
-								.getFeatures().size(); k++) {
-							int otherIndex = k - minAgent.getSplitIndex()
-									+ otherAgent.getSplitIndex();
+						for (int k = minAgent.getSplitIndex(); k < minAgent.getFeatures().size(); k++) {
+							int otherIndex = k - minAgent.getSplitIndex() + otherAgent.getSplitIndex();
 
-							if (!minAgent.getFeatures().get(k).equals(
-									otherAgent.getFeatures().get(otherIndex))) {
-								nrNeighborDiffs[k - minAgent.getSplitIndex()
-										+ splitIndex]++;
+							if (!minAgent.getFeatures().get(k).equals(otherAgent.getFeatures().get(otherIndex))) {
+								nrNeighborDiffs[k - minAgent.getSplitIndex() + splitIndex]++;
 							}
 						}
 					} else { // otherwise they have equal feature sizes
 						if (ag.getFeatures().size() == nrFeatures) {
 							for (int k = 0; k < nrFeatures; k++) {
-								if (!ag.getFeatures().get(k).equals(
-										neighborAgent.getFeatures().get(k))) {
+								if (!ag.getFeatures().get(k).equals(neighborAgent.getFeatures().get(k))) {
 									nrNeighborDiffs[k]++;
 								}
 							}
@@ -310,19 +316,15 @@ public class ComplexSimulation implements Simulation {
 							// expected one (the maximum)
 							// compare up to splitIndex
 							for (int k = 0; k < ag.getSplitIndex(); k++) {
-								if (!ag.getFeatures().get(k).equals(
-										neighborAgent.getFeatures().get(k))) {
+								if (!ag.getFeatures().get(k).equals(neighborAgent.getFeatures().get(k))) {
 									nrNeighborDiffs[k]++;
 								}
 							}
 
 							// compare from splitIndex onwards
-							for (int k = ag.getSplitIndex(); k < ag
-									.getFeatures().size(); k++) {
-								if (!ag.getFeatures().get(k).equals(
-										neighborAgent.getFeatures().get(k))) {
-									nrNeighborDiffs[k - ag.getSplitIndex()
-											+ splitIndex]++;
+							for (int k = ag.getSplitIndex(); k < ag.getFeatures().size(); k++) {
+								if (!ag.getFeatures().get(k).equals(neighborAgent.getFeatures().get(k))) {
+									nrNeighborDiffs[k - ag.getSplitIndex() + splitIndex]++;
 								}
 							}
 						}
