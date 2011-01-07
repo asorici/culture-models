@@ -6,8 +6,8 @@ import java.util.List;
 public class ComplexAgent extends Agent<Integer> {
 
 	public static final int MAX_FEATURES = 9;
-	static final double HIGH_FEATURE_PROB = 0.6;
-	static final double LOW_FEATURE_PROB = 0.4;
+	static final double HIGH_FEATURE_PROB = 0.9;
+	static final double LOW_FEATURE_PROB = 0.3;
 
 	private int splitIndex;
 	private int exteriorConsistencySum = 0;
@@ -94,9 +94,13 @@ public class ComplexAgent extends Agent<Integer> {
 
 			ComplexAgent neighbor = (ComplexAgent) ag;
 
-			features.add(splitIndex, neighbor.features.get(neighbor.splitIndex - 1));
-			features.add(neighbor.features.get(agSize - 1));
-
+			//features.add(splitIndex, neighbor.features.get(neighbor.splitIndex - 1));
+			features.add(splitIndex, Agent.random.nextInt(10));
+			
+			//features.add(neighbor.features.get(agSize - 1));
+			int adoptedInternalValue = (neighbor.features.get(agSize - 1) + (2 * Agent.random.nextInt(3) - 2) + 10) % 10;
+			features.add(adoptedInternalValue);
+			
 			nFeatures = features.size();
 			splitIndex++;
 		} else {

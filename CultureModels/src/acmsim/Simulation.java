@@ -11,6 +11,15 @@ public abstract class Simulation {
 	public static final int PERCENT_CHANGE = 10;
 	public int gen = 0;
 	
+	public int currentStableRegionCount = 0;
+	public int prevStableRegionCount = 0;
+	public int reductionFactor = 1;
+	
+	public int[] localHomogeneityMeasure;
+	public int[] prevLocalHomogeneityMeasure;
+	
+	public int noChangeCt = 0;
+	public int noChangeThreshold = 100;
 	
 	@SuppressWarnings("unchecked")
 	public abstract List<Agent> getNeighbors(Agent<?> ag, Agent<?>[][] pop);

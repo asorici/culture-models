@@ -50,6 +50,7 @@ import acmsim.Simulation;
 public class MainInterface extends JFrame implements ActionListener {
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 700;
+	public int globalGenerationCount = 0;
 	
 	private Agent<Integer>[][] population;
 	private Simulation simulation; 
@@ -248,6 +249,7 @@ public class MainInterface extends JFrame implements ActionListener {
 						protected void done() {
 							synchronized (simRunning) {
 								simRunning = false;
+								globalGenerationCount += simulation.gen;
 							}
 						}
 						

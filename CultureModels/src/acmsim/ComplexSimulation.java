@@ -18,9 +18,6 @@ public class ComplexSimulation extends Simulation {
 	static final int CHANGE_PERIOD = 2000;
 
 	private MainInterface mainInterface;
-	private int currentStableRegionCount = 0;
-	private int prevStableRegionCount = 0;
-	private int reductionFactor = 1;
 	
 	public ComplexSimulation(MainInterface mainInterface) {
 		this.mainInterface = mainInterface;
@@ -47,8 +44,7 @@ public class ComplexSimulation extends Simulation {
 		return neighbors;
 	}
 
-	public static void changeRegion(Agent<?>[][] population, int corner,
-			int value) {
+	public static void changeRegion(Agent<?>[][] population, int corner, int value) {
 		int iL = 0, iH = REGION, jL = 0, jH = REGION;
 		switch (corner % 4) {
 		case 0:
@@ -86,10 +82,11 @@ public class ComplexSimulation extends Simulation {
 				population[i][j].setNeighbors(getNeighbors(population[i][j], population));
 			}
 		}
-
+		
+		noChangeCt = 0;
 		gen = 0;
 		while (gen < numGenerations) {
-			System.out.println("gen: " + gen);
+			//System.out.println("gen: " + gen);
 
 			if (gen >= CHANGE_PERIOD && gen % CHANGE_PERIOD == 0) {
 				
@@ -98,38 +95,54 @@ public class ComplexSimulation extends Simulation {
 				int xc = 1, yc = 1;
 				
 				int value = Agent.random.nextInt(10);
-				
 				ComplexSimulation.changeRegion(population,corner,value);			
 				
 			}
-
-			// take homogeneity measures
-			if (gen % 100 == 0) {
-				// regions per feature value
-				for (int k = 0; k < population[0][0].getFeatures().size(); k++) {
-					HashMap<Integer, Integer> regsPerFeatureVal = regionsPerFeatureValue((Agent<Integer>[][])population, k);
-					mainInterface.updateRegsPerFeatureGraph(regsPerFeatureVal, k);
+			
+			// global homogeneity measure
+			final HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
+			if (gen == 0) {
+				prevStableRegionCount = globalHomogeneityMap.keySet().size();
+				prevLocalHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
+			}
+			currentStableRegionCount = globalHomogeneityMap.keySet().size();
+			
+			// // localHomogeneity measure
+			localHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
+			
+			if (gen != 0) {
+				boolean noChange = true;
+				for (int k = 0; k < prevLocalHomogeneityMeasure.length; k++) {
+					if (localHomogeneityMeasure[k] != prevLocalHomogeneityMeasure[k]) {
+						noChange = false;
+					}
 				}
 				
-				final HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
+				if (noChange) {
+					noChangeCt++;
+					if (noChangeCt >= noChangeThreshold) {
+						System.out.println("###############################");
+						System.out.println("# Convergence reached already #");
+						System.out.println("###############################");
+						System.out.println("NR_GENS: " + (gen + mainInterface.globalGenerationCount));
+						
+						break;
+					}
+				}
+				else {
+					noChangeCt = 0;
+					for (int k = 0; k < prevLocalHomogeneityMeasure.length; k++) {
+						prevLocalHomogeneityMeasure[k] = localHomogeneityMeasure[k];
+					}
+				}
+			}
+			
+			// display homogeneity measures
+			if (gen % 100 == 0) {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
 						mainInterface.updateGlobalHomogeneityGraph(globalHomogeneityMap);
-					}
-				});
-				
-				
-				if (gen == 0) {
-					prevStableRegionCount = globalHomogeneityMap.keySet().size();
-				}
-				currentStableRegionCount = globalHomogeneityMap.keySet().size();
-				
-				// localHomogeneity measure
-				final int[] localHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
 						mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
 					}
 				});
@@ -216,9 +229,7 @@ public class ComplexSimulation extends Simulation {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					if (gen % 200 == 0) {
-						mainInterface.updateCanvas();
-					}
+					mainInterface.updateCanvas();
 				}
 			});
 
@@ -230,7 +241,16 @@ public class ComplexSimulation extends Simulation {
 		
 			gen++;
 		}
-
+		
+		// regions per feature value
+		for (int k = 0; k < population[0][0].getFeatures().size(); k++) {
+			HashMap<Integer, Integer> regsPerFeatureVal = regionsPerFeatureValue((Agent<Integer>[][])population, k);
+			System.out.println("======== Region count per feature[" + k + "] ========");
+			for (Integer featVal : regsPerFeatureVal.keySet()) {
+				System.out.println("feature val " + featVal + ": " + regsPerFeatureVal.get(featVal));
+			}
+		}
+		
 		printPopulation(population);
 	}
 
