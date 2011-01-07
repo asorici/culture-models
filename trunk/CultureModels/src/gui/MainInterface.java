@@ -93,9 +93,9 @@ public class MainInterface extends JFrame implements ActionListener {
 	}
 
 	private void initChartGraphics() {
-		JFrame chartFrame = new JFrame("Simulation stats");
-		setLayout(new GridLayout(2, 1));
-		setSize(900, 600);
+		chartFrame = new JFrame("Simulation stats");
+		chartFrame.setLayout(new GridLayout(2, 1));
+		chartFrame.setSize(900, 600);
 		
 		globalHomogeneityMeasure = new DefaultPieDataset();
 		localHomogeneityMeasure = new DefaultCategoryDataset();
