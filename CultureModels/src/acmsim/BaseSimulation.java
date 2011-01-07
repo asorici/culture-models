@@ -4,13 +4,15 @@ import gui.MainInterface;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
 
 import acm.Agent;
+import acm.ComplexAgent;
 
-public class BaseSimulation implements Simulation {
+public class BaseSimulation extends Simulation {
 	private MainInterface mainInterface;
 	
 	public BaseSimulation(MainInterface mainInterface) {
@@ -50,6 +52,17 @@ public class BaseSimulation implements Simulation {
 		int gen = 0;
 		while (gen < numGenerations) {
 			System.out.println("gen: " + gen);
+			
+			// take homogeneity measures
+			if (gen % 100 == 0) {
+				// global homogeneity measure
+				HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
+				mainInterface.updateGlobalHomogeneityGraph(globalHomogeneityMap);
+				
+				// localHomogeneity measure
+				int[] localHomogeneityMeasure = localHomogeneityMeasure((ComplexAgent[][])population, ComplexAgent.MAX_FEATURES, (ComplexAgent.MAX_FEATURES + 1) / 2);
+				mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
+			}
 			
 			// randomly select an individual
 			int y = Agent.random.nextInt(population.length);

@@ -76,6 +76,8 @@ public class MainInterface extends JFrame implements ActionListener {
 	
 	// stat graphs data
 	private JFrame chartFrame;
+	JFreeChart globalHomChart;
+	JFreeChart localHomChart;
 	Dataset[] regionsPerFeatureVal;
 	DefaultPieDataset globalHomogeneityMeasure;
 	DefaultCategoryDataset localHomogeneityMeasure;
@@ -100,8 +102,8 @@ public class MainInterface extends JFrame implements ActionListener {
 		globalHomogeneityMeasure = new DefaultPieDataset();
 		localHomogeneityMeasure = new DefaultCategoryDataset();
 		
-		JFreeChart globalHomChart = ChartFactory.createPieChart("Global Homogeneity Measure", globalHomogeneityMeasure, true, true, true);
-		JFreeChart localHomChart = ChartFactory.createLineChart(
+		globalHomChart = ChartFactory.createPieChart("Global Homogeneity Measure", globalHomogeneityMeasure, true, true, true);
+		localHomChart = ChartFactory.createLineChart(
 				"Local Homogeneity Measure", "gen. iter.", "no. of different pairs per feature",
 				localHomogeneityMeasure, PlotOrientation.VERTICAL, true, false, false);
 		
@@ -443,13 +445,13 @@ public class MainInterface extends JFrame implements ActionListener {
 	}
 
 	public void updateGlobalHomogeneityGraph(HashMap<Agent<Integer>, Integer> globalHomogeneityMap) {
-		globalHomogeneityMeasure = new DefaultPieDataset();
+		globalHomogeneityMeasure.clear();
 		
 		for (Agent<Integer> ag : globalHomogeneityMap.keySet()) {
 			globalHomogeneityMeasure.setValue(ag.toString(), globalHomogeneityMap.get(ag));
 		}
 		
-		//chartFrame.repaint();
+		chartFrame.repaint();
 	}
 
 	public void updateLocalHomogeneityGraph(int[] localHomogeneityMap, int genIter) {
