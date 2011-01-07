@@ -111,26 +111,35 @@ public class ComplexSimulation extends Simulation {
 					mainInterface.updateRegsPerFeatureGraph(regsPerFeatureVal, k);
 				}
 				
-				// global homogeneity measure
-				HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
-				mainInterface.updateGlobalHomogeneityGraph(globalHomogeneityMap);
+				final HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						mainInterface.updateGlobalHomogeneityGraph(globalHomogeneityMap);
+					}
+				});
+				
 				
 				if (gen == 0) {
 					prevStableRegionCount = globalHomogeneityMap.keySet().size();
 				}
 				currentStableRegionCount = globalHomogeneityMap.keySet().size();
 				
-				
 				// localHomogeneity measure
-				int[] localHomogeneityMeasure = localHomogeneityMeasure((ComplexAgent[][])population, ComplexAgent.MAX_FEATURES, (ComplexAgent.MAX_FEATURES + 1) / 2);
-				mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
+				final int[] localHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
+					}
+				});
 			}
 			
 			
 			int numInteractingAgents = Simulation.PERCENT_CHANGE * population.length * population.length / 100;
 			if (prevStableRegionCount != 0) {
 				if (currentStableRegionCount <= prevStableRegionCount / 2) {
-					reductionFactor *= 2;
+					reductionFactor = reductionFactor * 3 / 2;
 					prevStableRegionCount = currentStableRegionCount;
 				}
 				
