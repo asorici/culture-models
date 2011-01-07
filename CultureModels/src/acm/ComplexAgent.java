@@ -62,7 +62,7 @@ public class ComplexAgent extends Agent<Integer> {
 					extIndexes.add(i);
 
 			for (int i = splitIndex; i < mySize; i++)
-				//if (!features.get(i).equals(ag.features.get(i)))
+				if (!features.get(i).equals(ag.features.get(i)))
 					intIndexes.add(i);
 
 			if (!extIndexes.isEmpty()) {

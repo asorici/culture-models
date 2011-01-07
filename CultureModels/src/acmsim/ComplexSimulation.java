@@ -55,7 +55,7 @@ public class ComplexSimulation implements Simulation {
 
 		int gen = 0;
 		while (gen < numGenerations) {
-			System.out.println("gen: " + gen);
+		//	System.out.println("gen: " + gen);
 
 			if (gen >= CHANGE_PERIOD && gen % CHANGE_PERIOD == 0) {
 				
@@ -97,12 +97,12 @@ public class ComplexSimulation implements Simulation {
 			// rank agent's neighbors according to their interaction probability
 			List<Agent> neighbors = selectedAgent.getNeighbors();
 			
-			System.out.println(neighbors);
+		//	System.out.println(neighbors);
 			for (int k = 0; k < neighbors.size(); k++) {
 				Agent ag = neighbors.get(k);
-				System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
+			//	System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
 			}
-			System.out.println();
+		//	System.out.println();
 
 			double interactionSelection = Agent.random.nextDouble();
 
@@ -119,7 +119,7 @@ public class ComplexSimulation implements Simulation {
 			if (((ComplexAgent)selectedAgent).getExteriorConsistencySum() == ((ComplexAgent)selectedAgent).getInteriorConsistencySum()) {
 				if (!bigNeighbors.isEmpty()) {
 					selectedNeighbor = bigNeighbors.get(Agent.random.nextInt(bigNeighbors.size()));
-					System.out.println(selectedNeighbor);
+			//		System.out.println(selectedNeighbor);
 					selectedAgent.interactWith(selectedNeighbor); 	// we might not be able to
 					selectedAgent.update(); 						// interact with any neighbor
 				}
@@ -147,11 +147,11 @@ public class ComplexSimulation implements Simulation {
 				
 				double interactionThreshold = Agent.random.nextDouble();
 				if (selectedNeighbor != null && (selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold)) {
-					System.out.println(selectedNeighbor);
+			//		System.out.println(selectedNeighbor);
 					selectedAgent.interactWith(selectedNeighbor); 	// we might not be able to
 					selectedAgent.update(); 						// interact with any neighbor
 				} else {
-					System.out.println("null");
+			//		System.out.println("null");
 				}
 			}
 			
@@ -173,7 +173,7 @@ public class ComplexSimulation implements Simulation {
 			gen++;
 		}
 
-		printPopulation(population);
+	//	printPopulation(population);
 	}
 
 	@SuppressWarnings("unchecked")

@@ -37,6 +37,7 @@ import acmsim.BaseSimulation;
 import acmsim.ComplexSimulation;
 import acmsim.Simulation;
 
+@SuppressWarnings("serial")
 public class MainInterface extends JFrame implements ActionListener {
 	public static final int WIDTH = 800;
 	public static final int HEIGHT = 700;
