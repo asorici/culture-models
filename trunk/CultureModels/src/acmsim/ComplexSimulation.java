@@ -216,8 +216,9 @@ public class ComplexSimulation extends Simulation {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					// mainInterface.setPopulation(holdPopulation);
-					mainInterface.updateCanvas();
+					if (gen % 200 == 0) {
+						mainInterface.updateCanvas();
+					}
 				}
 			});
 
