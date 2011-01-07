@@ -2,15 +2,12 @@ package acmsim;
 import gui.MainInterface;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.SwingUtilities;
 
 import acm.Agent;
-import acm.ComplexAgent;
 
 public class BaseSimulation extends Simulation {
 	private MainInterface mainInterface;
@@ -32,14 +29,14 @@ public class BaseSimulation extends Simulation {
 
 		int size = pop.length;
 		
-		neighbors.add(pop[(i - 1 + size) % size][(j - 1 + size) % size]);
+		//neighbors.add(pop[(i - 1 + size) % size][(j - 1 + size) % size]);
 		neighbors.add(pop[(i - 1  + size) % size][j]);
-		neighbors.add(pop[(i - 1  + size) % size][(j + 1 + size) % size]);
+		//neighbors.add(pop[(i - 1  + size) % size][(j + 1 + size) % size]);
 		neighbors.add(pop[i][(j - 1  + size) % size]);
 		neighbors.add(pop[i][(j + 1 + size) % size]);
-		neighbors.add(pop[(i + 1 + size) % size][(j - 1 + size) % size]);
+		//neighbors.add(pop[(i + 1 + size) % size][(j - 1 + size) % size]);
 		neighbors.add(pop[(i + 1  + size) % size][j]);
-		neighbors.add(pop[(i + 1  + size) % size][(j + 1 + size) % size]);
+		//neighbors.add(pop[(i + 1  + size) % size][(j + 1 + size) % size]);
 		
 		return neighbors;
 	}
@@ -52,7 +49,7 @@ public class BaseSimulation extends Simulation {
 			}
 		}
 		
-		int gen = 0;
+		gen = 0;
 		while (gen < numGenerations) {
 			System.out.println("gen: " + gen);
 			
@@ -70,8 +67,6 @@ public class BaseSimulation extends Simulation {
 				// localHomogeneity measure
 				int[] localHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
 				mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
-				
-				
 			}
 			
 			int numInteractingAgents = Simulation.PERCENT_CHANGE * population.length * population.length / 100;
@@ -102,20 +97,22 @@ public class BaseSimulation extends Simulation {
 				double interactionSelection = Agent.random.nextDouble();
 				
 				// pick neighbor to interact with
+				Agent selectedNeighbor = neighbors.get(Agent.random.nextInt(neighbors.size()));
+				/*
 				Agent selectedNeighbor = null;
-				
 				for (int i = 0; i < neighbors.size(); i++)
 				{
 					Agent crtNeighbor = neighbors.get(i);
 					double lowThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor)) / sumAll(neighbors,selectedAgent);
 					double highThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor) + 1) / sumAll(neighbors, selectedAgent);
-				
+					
 					if (interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
 					{
 						selectedNeighbor = crtNeighbor;
 						break;
 					}
 				}
+				*/
 				
 				double interactionThreshold = Agent.random.nextDouble();
 				if (selectedNeighbor != null && selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {

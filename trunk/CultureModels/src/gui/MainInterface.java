@@ -66,6 +66,7 @@ public class MainInterface extends JFrame implements ActionListener {
 	private JPanel controlPanel;
 	private JButton runButton;
 	private JTextField nrRunsTextfield;
+	private JLabel currentGenLabel = new JLabel("0");
 	
 	private JTextArea simProgressDisplayArea;
 	
@@ -185,6 +186,11 @@ public class MainInterface extends JFrame implements ActionListener {
 		runDataPanel.add(nrRunsPanel);
 		runDataPanel.add(buttonPanel);
 		
+		JPanel currentGenPanel = new JPanel();
+		JLabel genInfoLabel = new JLabel("currentGen:");
+		currentGenPanel.add(genInfoLabel);
+		currentGenPanel.add(currentGenPanel);
+		
 		controlPanel.add(selectionLabelPanel);
 		controlPanel.add(runDataPanel);
 		
@@ -206,6 +212,7 @@ public class MainInterface extends JFrame implements ActionListener {
 		simProgressDisplayArea.setText(printPopulation(population));
 		simProgressDisplayArea.repaint();
 		simCanvas.repaint();
+		currentGenLabel.setText("" + simulation.gen);
 	}
 	
 	@Override

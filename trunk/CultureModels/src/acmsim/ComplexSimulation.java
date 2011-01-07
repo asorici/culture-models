@@ -35,14 +35,14 @@ public class ComplexSimulation extends Simulation {
 
 		int size = pop.length;
 
-		neighbors.add(pop[(i - 1 + size) % size][(j - 1 + size) % size]);
+		//neighbors.add(pop[(i - 1 + size) % size][(j - 1 + size) % size]);
 		neighbors.add(pop[(i - 1 + size) % size][j]);
-		neighbors.add(pop[(i - 1 + size) % size][(j + 1 + size) % size]);
+		///neighbors.add(pop[(i - 1 + size) % size][(j + 1 + size) % size]);
 		neighbors.add(pop[i][(j - 1 + size) % size]);
 		neighbors.add(pop[i][(j + 1 + size) % size]);
-		neighbors.add(pop[(i + 1 + size) % size][(j - 1 + size) % size]);
+		//neighbors.add(pop[(i + 1 + size) % size][(j - 1 + size) % size]);
 		neighbors.add(pop[(i + 1 + size) % size][j]);
-		neighbors.add(pop[(i + 1 + size) % size][(j + 1 + size) % size]);
+		//neighbors.add(pop[(i + 1 + size) % size][(j + 1 + size) % size]);
 
 		return neighbors;
 	}
@@ -87,7 +87,7 @@ public class ComplexSimulation extends Simulation {
 			}
 		}
 
-		int gen = 0;
+		gen = 0;
 		while (gen < numGenerations) {
 			System.out.println("gen: " + gen);
 
