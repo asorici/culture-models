@@ -36,7 +36,7 @@ public abstract class Simulation {
 
 	// localHomogeneityMeasure - number of pairs that had any differences (in
 	// this case inconsistency)
-	public int[] localHomogeneityMeasure(ComplexAgent[][] population, int nrFeatures, int splitIndex) {
+	public int[] localHomogeneityMeasure(Agent<Integer>[][] population, int nrFeatures, int splitIndex) {
 		int[] nrNeighborDiffs = new int[nrFeatures];
 		for (int k = 0; k < nrNeighborDiffs.length; k++) {
 			nrNeighborDiffs[k] = 0;
@@ -44,16 +44,16 @@ public abstract class Simulation {
 
 		for (int i = 0; i < population.length; i++) {
 			for (int j = 0; j < population[i].length; j++) {
-				ComplexAgent ag = population[i][j];
+				Agent<Integer> ag = population[i][j];
 				List<Agent> neighbors = ag.getNeighbors();
 
 				for (Agent neighbor : neighbors) {
-					ComplexAgent neighborAgent = (ComplexAgent) neighbor;
+					Agent<Integer> neighborAgent = (Agent<Integer>) neighbor;
 
 					// if the agents have different feature sizes
 					if (ag.getFeatures().size() != neighborAgent.getFeatures().size()) {
-						ComplexAgent minAgent = ag;
-						ComplexAgent otherAgent = neighborAgent;
+						Agent<Integer> minAgent = ag;
+						Agent<Integer> otherAgent = neighborAgent;
 						if (neighborAgent.getFeatures().size() < ag.getFeatures().size()) {
 							minAgent = neighborAgent;
 							otherAgent = ag;

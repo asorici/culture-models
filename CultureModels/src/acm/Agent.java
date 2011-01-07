@@ -55,6 +55,8 @@ public abstract class Agent<T> {
 	}
 
 	public abstract double interactionProbability(Agent<T> ag);
+	
+	public abstract int getSplitIndex();
 
 	public void update() {
 	}
