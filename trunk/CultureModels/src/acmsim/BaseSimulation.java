@@ -64,61 +64,65 @@ public class BaseSimulation extends Simulation {
 				mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
 			}
 			
-			// randomly select an individual
-			int y = Agent.random.nextInt(population.length);
-			int x = Agent.random.nextInt(population.length);
+			int numInteractingAgents = Simulation.PERCENT_CHANGE * population.length * population.length / 100;
 			
-			final Agent selectedAgent = population[y][x];
-			
-			// rank agent's neighbors according to their interaction probability
-			List<Agent> neighbors = selectedAgent.getNeighbors();
-			
-			/*
-			System.out.println(neighbors);
-			for (int k = 0; k < neighbors.size(); k++) {
-				Agent ag = neighbors.get(k);
-				System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
-			}
-			System.out.println();
-			*/
-			
-			double interactionSelection = Agent.random.nextDouble();
-			
-			// pick neighbor to interact with
-			Agent selectedNeighbor = null;
-			
-			for (int i = 0; i < neighbors.size(); i++)
+			for(int a=0;a<numInteractingAgents;a++)
 			{
-				Agent crtNeighbor = neighbors.get(i);
-				double lowThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor)) / sumAll(neighbors,selectedAgent);
-				double highThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor) + 1) / sumAll(neighbors, selectedAgent);
-			
-				if (interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
+				// randomly select an individual
+				int y = Agent.random.nextInt(population.length);
+				int x = Agent.random.nextInt(population.length);
+				
+				final Agent selectedAgent = population[y][x];
+				
+				// rank agent's neighbors according to their interaction probability
+				List<Agent> neighbors = selectedAgent.getNeighbors();
+				
+				/*
+				System.out.println(neighbors);
+				for (int k = 0; k < neighbors.size(); k++) {
+					Agent ag = neighbors.get(k);
+					System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
+				}
+				System.out.println();
+				*/
+				
+				double interactionSelection = Agent.random.nextDouble();
+				
+				// pick neighbor to interact with
+				Agent selectedNeighbor = null;
+				
+				for (int i = 0; i < neighbors.size(); i++)
 				{
-					selectedNeighbor = crtNeighbor;
-					break;
+					Agent crtNeighbor = neighbors.get(i);
+					double lowThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor)) / sumAll(neighbors,selectedAgent);
+					double highThreshold = sum(neighbors, selectedAgent, neighbors.indexOf(crtNeighbor) + 1) / sumAll(neighbors, selectedAgent);
+				
+					if (interactionSelection >= lowThreshold && interactionSelection < highThreshold) 
+					{
+						selectedNeighbor = crtNeighbor;
+						break;
+					}
+				}
+				
+				/*
+				if (selectedNeighbor != null) {
+					System.out.println(selectedNeighbor);
+				}
+				else {
+					System.out.println("null");
+				}
+				*/
+				
+				double interactionThreshold = Agent.random.nextDouble();
+				if (selectedNeighbor != null && selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
+					//System.out.println(selectedNeighbor);
+					selectedAgent.interactWith(selectedNeighbor);			// we might not be able to		
+					selectedAgent.update();									// interact with any neighbor
+				}
+				else {
+					//System.out.println("null");
 				}
 			}
-			
-			/*
-			if (selectedNeighbor != null) {
-				System.out.println(selectedNeighbor);
-			}
-			else {
-				System.out.println("null");
-			}
-			*/
-			
-			double interactionThreshold = Agent.random.nextDouble();
-			if (selectedNeighbor != null && selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
-				//System.out.println(selectedNeighbor);
-				selectedAgent.interactWith(selectedNeighbor);			// we might not be able to		
-				selectedAgent.update();									// interact with any neighbor
-			}
-			else {
-				//System.out.println("null");
-			}
-		
 			final Agent<?>[][] holdPopulation = population;
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -133,7 +137,7 @@ public class BaseSimulation extends Simulation {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+		
 			gen++;
 		}
 		
