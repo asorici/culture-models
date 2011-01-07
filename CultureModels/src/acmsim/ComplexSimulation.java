@@ -44,6 +44,37 @@ public class ComplexSimulation extends Simulation {
 		return neighbors;
 	}
 
+	public static void changeRegion(Agent<?>[][] population, int corner,
+			int value) {
+		int iL = 0, iH = REGION, jL = 0, jH = REGION;
+		switch (corner % 4) {
+		case 0:
+			break;
+		case 1:
+			iL = 0;
+			iH = REGION;
+			jL = population.length - REGION;
+			jH = population.length;
+			break;
+		case 2:
+			iL = population.length - REGION;
+			iH = population.length;
+			jL = 0;
+			jH = REGION;			
+			break;
+		case 3:
+			iL = population.length - REGION;
+			iH = population.length;
+			jL = population.length - REGION;
+			jH = population.length;
+			break;
+		}
+		
+		for(int i=iL;i<iH;i++)
+			for(int j=jL;j<jH;j++)								
+				((ComplexAgent)population[i][j]).technologicalChange(value);
+	}
+	
 	@Override
 	public void runSimulation(int numGenerations, Agent<?>[][] population) {
 
@@ -63,29 +94,10 @@ public class ComplexSimulation extends Simulation {
 				int corner = Agent.random.nextInt(4);
 				int xc = 1, yc = 1;
 				
-				switch (corner % 4) {
-					case 0: // upper left
-						xc = Agent.random.nextInt(REGION);
-						yc = Agent.random.nextInt(REGION);
-						break;
-					case 1: // lower left
-						xc = Agent.random.nextInt(REGION);
-						yc = population.length - 1 - Agent.random.nextInt(REGION);
-						break;
-					case 2: // upper right
-						xc = population.length - 1 - Agent.random.nextInt(REGION);
-						yc = Agent.random.nextInt(REGION);
-						break;
-					case 3: // lower right
-						xc = population.length - 1 - Agent.random.nextInt(REGION);
-						yc = population.length - 1 - Agent.random.nextInt(REGION);
-						break;
-					default:
-						break;
-				}
+				int value = Agent.random.nextInt(10);
 				
-				ComplexAgent changingAgent = (ComplexAgent)population[yc][xc];
-				changingAgent.technologicalChange();
+				ComplexSimulation.changeRegion(population,corner,value);			
+				
 			}
 
 			// take homogeneity measures
