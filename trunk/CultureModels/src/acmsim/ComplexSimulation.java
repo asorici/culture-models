@@ -18,7 +18,10 @@ public class ComplexSimulation extends Simulation {
 	static final int CHANGE_PERIOD = 2000;
 
 	private MainInterface mainInterface;
-
+	private int currentStableRegionCount = 0;
+	private int prevStableRegionCount = 0;
+	private int reductionFactor = 1;
+	
 	public ComplexSimulation(MainInterface mainInterface) {
 		this.mainInterface = mainInterface;
 	}
@@ -112,6 +115,12 @@ public class ComplexSimulation extends Simulation {
 				HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
 				mainInterface.updateGlobalHomogeneityGraph(globalHomogeneityMap);
 				
+				if (gen == 0) {
+					prevStableRegionCount = globalHomogeneityMap.keySet().size();
+				}
+				currentStableRegionCount = globalHomogeneityMap.keySet().size();
+				
+				
 				// localHomogeneity measure
 				int[] localHomogeneityMeasure = localHomogeneityMeasure((ComplexAgent[][])population, ComplexAgent.MAX_FEATURES, (ComplexAgent.MAX_FEATURES + 1) / 2);
 				mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
@@ -119,8 +128,19 @@ public class ComplexSimulation extends Simulation {
 			
 			
 			int numInteractingAgents = Simulation.PERCENT_CHANGE * population.length * population.length / 100;
+			if (prevStableRegionCount != 0) {
+				if (currentStableRegionCount <= prevStableRegionCount / 2) {
+					reductionFactor *= 2;
+					prevStableRegionCount = currentStableRegionCount;
+				}
+				
+				numInteractingAgents /= reductionFactor;
+				if (numInteractingAgents < 1) {
+					numInteractingAgents = 1;
+				}
+			}
 			
-			for(int a=0;a<numInteractingAgents;a++)
+			for (int a = 0; a < numInteractingAgents; a++)
 			{
 				// randomly select an individual for interaction
 				int y = Agent.random.nextInt(population.length);
@@ -130,15 +150,6 @@ public class ComplexSimulation extends Simulation {
 				
 				// rank agent's neighbors according to their interaction probability
 				List<Agent> neighbors = selectedAgent.getNeighbors();
-				
-				/*
-				System.out.println(neighbors);			
-				for (int k = 0; k < neighbors.size(); k++) {
-					Agent ag = neighbors.get(k);
-					System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
-				}
-				System.out.println();
-				*/
 				
 				double interactionSelection = Agent.random.nextDouble();
 	
@@ -190,7 +201,8 @@ public class ComplexSimulation extends Simulation {
 						//System.out.println("null");
 					}
 				}
-			}	
+			}
+			
 			final Agent<?>[][] holdPopulation = population;
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override

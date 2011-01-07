@@ -14,6 +14,9 @@ import acm.ComplexAgent;
 
 public class BaseSimulation extends Simulation {
 	private MainInterface mainInterface;
+	private int currentStableRegionCount = 0;
+	private int prevStableRegionCount = 0;
+	private int reductionFactor = 1;
 	
 	public BaseSimulation(MainInterface mainInterface) {
 		this.mainInterface = mainInterface;
@@ -59,14 +62,33 @@ public class BaseSimulation extends Simulation {
 				HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
 				mainInterface.updateGlobalHomogeneityGraph(globalHomogeneityMap);
 				
+				if (gen == 0) {
+					prevStableRegionCount = globalHomogeneityMap.keySet().size();
+				}
+				currentStableRegionCount = globalHomogeneityMap.keySet().size();
+				
 				// localHomogeneity measure
 				int[] localHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
 				mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
+				
+				
 			}
 			
 			int numInteractingAgents = Simulation.PERCENT_CHANGE * population.length * population.length / 100;
+			if (prevStableRegionCount != 0) {
+				if (currentStableRegionCount <= prevStableRegionCount / 2) {
+					reductionFactor *= 2;
+					prevStableRegionCount = currentStableRegionCount;
+				}
+				
+				numInteractingAgents /= reductionFactor;
+				if (numInteractingAgents < 1) {
+					numInteractingAgents = 1;
+				}
+			}
 			
-			for(int a=0;a<numInteractingAgents;a++)
+			
+			for(int a = 0; a < numInteractingAgents; a++)
 			{
 				// randomly select an individual
 				int y = Agent.random.nextInt(population.length);
@@ -76,15 +98,6 @@ public class BaseSimulation extends Simulation {
 				
 				// rank agent's neighbors according to their interaction probability
 				List<Agent> neighbors = selectedAgent.getNeighbors();
-				
-				/*
-				System.out.println(neighbors);
-				for (int k = 0; k < neighbors.size(); k++) {
-					Agent ag = neighbors.get(k);
-					System.out.printf("%6.2f ", selectedAgent.interactionProbability(ag));
-				}
-				System.out.println();
-				*/
 				
 				double interactionSelection = Agent.random.nextDouble();
 				
@@ -103,15 +116,6 @@ public class BaseSimulation extends Simulation {
 						break;
 					}
 				}
-				
-				/*
-				if (selectedNeighbor != null) {
-					System.out.println(selectedNeighbor);
-				}
-				else {
-					System.out.println("null");
-				}
-				*/
 				
 				double interactionThreshold = Agent.random.nextDouble();
 				if (selectedNeighbor != null && selectedAgent.interactionProbability(selectedNeighbor) > interactionThreshold) {
@@ -176,21 +180,3 @@ public class BaseSimulation extends Simulation {
 
 }
 
-/*
-Collections.sort(neighbors, new Comparator<Agent>() {			
-	@Override
-	public int compare(Agent ag1, Agent ag2) {					
-		if (selectedAgent.interactionProbability(ag1) == selectedAgent.interactionProbability(ag2)) {
-			return 0;
-		}
-		else {
-			if (selectedAgent.interactionProbability(ag1) > selectedAgent.interactionProbability(ag2)) {
-				return 1;
-			}
-			else {
-				return -1;
-			}
-		}
-	}
-});
-*/
