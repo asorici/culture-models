@@ -121,4 +121,23 @@ public abstract class Simulation {
 
 		return nrNeighborDiffs;
 	}
+	
+	public HashMap<Integer, Integer> regionsPerFeatureValue(Agent<Integer>[][] population, int featureIndex) {
+		HashMap<Integer, Integer> regionsPerFeatureVal = new HashMap<Integer, Integer>();
+		for (int i = 0; i < population.length; i++) {
+			for (int j = 0; j < population.length; j++) {
+				if (population[i][j].getFeatures().size() > featureIndex) {
+					int featureVal = population[i][j].getFeatures().get(featureIndex);
+					Integer existingCount = regionsPerFeatureVal.get(featureVal);
+					if (existingCount == null) {
+						regionsPerFeatureVal.put(featureVal, 1);
+					} else {
+						regionsPerFeatureVal.put(featureVal, existingCount + 1);
+					}
+				}
+			}
+		}
+
+		return regionsPerFeatureVal;
+	}
 }
