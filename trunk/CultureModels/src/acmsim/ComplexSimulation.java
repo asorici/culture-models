@@ -15,7 +15,7 @@ public class ComplexSimulation extends Simulation {
 
 	private static final double NEW_FEATURE_ATTRACTION_THRESHOLD = 0.8;
 	private static final int REGION = 3;
-	static final int CHANGE_PERIOD = 2000;
+	static final int CHANGE_PERIOD = 200;
 
 	private MainInterface mainInterface;
 	
@@ -103,12 +103,12 @@ public class ComplexSimulation extends Simulation {
 			final HashMap<Agent<Integer>, Integer> globalHomogeneityMap = globalHomogeneityMeasure((Agent<Integer>[][])population);
 			if (gen == 0) {
 				prevStableRegionCount = globalHomogeneityMap.keySet().size();
-				prevLocalHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
+				prevLocalHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, ComplexAgent.MAX_FEATURES, (ComplexAgent.MAX_FEATURES + 1) / 2);
 			}
 			currentStableRegionCount = globalHomogeneityMap.keySet().size();
 			
 			// // localHomogeneity measure
-			localHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
+			localHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, ComplexAgent.MAX_FEATURES, (ComplexAgent.MAX_FEATURES + 1) / 2);
 			
 			if (gen != 0) {
 				boolean noChange = true;
@@ -285,24 +285,7 @@ public class ComplexSimulation extends Simulation {
 		System.out.println();
 	}
 
-	public HashMap<Integer, Integer> regionsPerFeatureValue(Agent<Integer>[][] population, int featureIndex) {
-		HashMap<Integer, Integer> regionsPerFeatureVal = new HashMap<Integer, Integer>();
-		for (int i = 0; i < population.length; i++) {
-			for (int j = 0; j < population.length; j++) {
-				if (population[i][j].getFeatures().size() > featureIndex) {
-					int featureVal = population[i][j].getFeatures().get(featureIndex);
-					Integer existingCount = regionsPerFeatureVal.get(featureVal);
-					if (existingCount == null) {
-						regionsPerFeatureVal.put(featureVal, 1);
-					} else {
-						regionsPerFeatureVal.put(featureVal, existingCount + 1);
-					}
-				}
-			}
-		}
-
-		return regionsPerFeatureVal;
-	}
+	
 
 	
 }

@@ -159,9 +159,9 @@ public class BaseSimulation extends Simulation {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					if (gen % 200 == 0) {
+					//if (gen % 200 == 0) {
 						mainInterface.updateCanvas();
-					}
+					//}
 				}
 			});
 			
@@ -175,6 +175,15 @@ public class BaseSimulation extends Simulation {
 		}
 		
 		printPopulation(population);
+		
+		// regions per feature value
+		for (int k = 0; k < population[0][0].getFeatures().size(); k++) {
+			HashMap<Integer, Integer> regsPerFeatureVal = regionsPerFeatureValue((Agent<Integer>[][])population, k);
+			System.out.println("======== Region count per feature[" + k + "] ========");
+			for (Integer featVal : regsPerFeatureVal.keySet()) {
+				System.out.println("feature val " + featVal + ": " + regsPerFeatureVal.get(featVal));
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")

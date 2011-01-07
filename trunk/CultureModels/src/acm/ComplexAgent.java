@@ -7,7 +7,7 @@ public class ComplexAgent extends Agent<Integer> {
 
 	public static final int MAX_FEATURES = 9;
 	static final double HIGH_FEATURE_PROB = 0.9;
-	static final double LOW_FEATURE_PROB = 0.3;
+	static final double LOW_FEATURE_PROB = 0.1;
 
 	private int splitIndex;
 	private int exteriorConsistencySum = 0;
