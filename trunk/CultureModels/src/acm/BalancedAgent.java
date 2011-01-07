@@ -7,7 +7,7 @@ public class BalancedAgent extends Agent<Integer> {
 	
 	public BalancedAgent(int nFeatures, String featureString) {
 		super(nFeatures, featureString);
-		splitIndex = 2 * nFeatures / 3;
+		splitIndex = (nFeatures + 1) / 2;
 		
 		for (int i = 0; i < featureString.length(); i++) {
 			features.add(Integer.valueOf(featureString.substring(i, i + 1)));
@@ -60,5 +60,10 @@ public class BalancedAgent extends Agent<Integer> {
 
 	public void setInteriorConsistencySum(int interiorConsistencySum) {
 		this.interiorConsistencySum = interiorConsistencySum;
+	}
+
+	@Override
+	public int getSplitIndex() {
+		return splitIndex;
 	}
 }

@@ -60,7 +60,7 @@ public class BaseSimulation extends Simulation {
 				mainInterface.updateGlobalHomogeneityGraph(globalHomogeneityMap);
 				
 				// localHomogeneity measure
-				int[] localHomogeneityMeasure = localHomogeneityMeasure((ComplexAgent[][])population, ComplexAgent.MAX_FEATURES, (ComplexAgent.MAX_FEATURES + 1) / 2);
+				int[] localHomogeneityMeasure = localHomogeneityMeasure((Agent<Integer>[][])population, population[0][0].getFeatures().size(), population[0][0].getSplitIndex());
 				mainInterface.updateLocalHomogeneityGraph(localHomogeneityMeasure, gen);
 			}
 			

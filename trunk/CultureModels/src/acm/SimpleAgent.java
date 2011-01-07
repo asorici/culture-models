@@ -16,5 +16,10 @@ public class SimpleAgent extends Agent<Integer> {
 		return (double)numberOfMatchingFeatures(ag) / (double)nFeatures;
 	}
 
+	@Override
+	public int getSplitIndex() {
+		return 0;
+	}
+
 	
 }
