@@ -21,7 +21,7 @@
 
 % Short headings should be running head and authors last names
 
-\ShortHeadings{1}{1}{2010}{Instructions for Formatting CSMR article.}{Author 1 et. al}
+\ShortHeadings{1}{1}{2010}{Instructions for Formatting CSMR article.}{Sorici, B\u{a}l\u{a}nel}
 
 \begin{document}
 
@@ -101,22 +101,27 @@ Our testing and experimentation framework is based on the above mentioned model 
 \emph{Cultural attractiveness} is expressed by making external features more likely to change than internal features. 
 The expected outcome of this simulation was that of a more dynamic population that might not stabilize to form different regions. Rather, regions might only show signs of stabilization for a given amount of time. As a consequence, we will reconsider the measures of homogeneity as the development of our experiment progresses.
 
-\section{Measures of homogeneity}
+ \section{Measures of homogeneity}
 
-Some of the statistics we want to gather in the simulations we run is how many stable regions (homogeneous regions) result from the given interactions, to what degree does the difference between the regions extend, how fast do they form.
+Some of the statistics we wanted to gather in the simulations we ran were how many stable regions (homogeneous regions) resulted from the given interactions, to what degree did the difference between the regions extend, how fast did they form.
 The measures described below are intended to capture these kind of statistics. Some of them were proposed by Axelrod in \cite{Axelrod}.
 
-The \emph{global homogeneity} gives a measure of how many different regions are formed in the population, even if these regions are unstable.
+The \emph{global homogeneity} gives a measure of how many different regions are formed in the population, even if these regions are unstable. Like its name suggests, it is supposed to give a coarser overview of the number of regions.
 
-The \emph{local homogeneity} measures how many pairs of agents have different features at a given time.
+The \emph{local homogeneity} measures how many differences there are between any two agents in a given feature.
+To be clearer, a vector indexed by all the features is created and for each feature we store the number of pairs of agents that have different values for the given feature.
+This type of measure allows for a more finer grained analysis of homogeneity. This is why it used for determining the convergence speed in some of the simulations. If the values for this measure did not change for more than 100 iterations (one iteration is seen as the change in one individual's traits) then the population was considered to have converged to a set of stable regions.
+
+The \emph{regions per feature} measure shows the distribution of the populations individuals over the values (traits) of each individual feature. To put it otherwise, for each value of a selected feature, we store the number of individuals from the population that have that value as a trait for the feature considered.
+Such a measure would allow to see which are the preffered traits or what constraints exist (if any) in the process of exchanging traits (if individuals are spread across all values of a feature it can mean that they seldomly engage in interactions which involve that feature).
 
 \section{Results}
 
-\paragraph*{}In the first experiment, we used the similarity between neigboring individuals as an incentive to make them interact, as explained in the previous section. Apparently opposite to Axelrod's idea that similarity determines even more similarity, the tests showed that the similarity regions formed as a result of the interactions were not stable. Even though the regions are now perceived as only a set of individuals that share the same feature values, and not necessarily seen as a compact set of cells on the grid, these regions that form over a number of generations are relatively few and their number remains constant. Interestingly enough, this somewhat confirms Axelrod's theory.
+\paragraph*{}In the first experiment, we used the similarity between neigboring individuals as an incentive to make them interact: the interacting neighbor was chosen by means of a roulette process. Each individual had 8 neighbors to choose from. When selecting from all neighbors, apparently opposite to Axelrod's idea that similarity determines even more similarity, the obtained homogeneity regions were not stable. Even though the regions are now perceived as only a set of individuals that share the same feature values, and not necessarily seen as a compact set of cells on the grid, these regions that form over a number of generations are relatively few and their number remains constant. Interestingly enough, this somewhat confirms Axelrod's theory.
 
-\paragraph*{}The actual baseline simulation was run with random interacting agents. In each generation, a given number of agents were randomly chosen to interact with one of their neighbors (also randomly selected). The results were as expected: after a number of generations, the population converged towards a uniform stable region, with very few "islands". In our simulation, it took the population 500 generations to converge.
+\paragraph*{}In the actual baseline simulation (the simple agent), we changed a few minor details, which turned out to have a significant impact on the formation of stable regions. The experiment was run with random interacting agents (not chosen by roulette selection). Moreover the neighborhood was limited to 4 individuals (up, down, left, right). In each generation, a given number of agents were randomly chosen to interact with one of their neighbors. The results were as expected: after a number of generations, the population converged towards a uniform stable region, with very few "islands". In one case we even ended up having the population converge in its entirety. In our simulation, it took the population of 10 x 10 individuals 5000 generations to converge, and populations greater than 15 x 15 individuals took on average more than 15000 iterations to stabilize.
 
-\paragraph*{}For the second type of agent (the balanced agent) we ran the simulation multiple times. Table 1 shows the average convergence time for , for three different population sizes: 10x10, 15x15, 20x20. As the population increases, only a slight increase in the convergence time can be noticed.
+\paragraph*{}For the second type of agent (the balanced agent) we ran the simulation multiple times. Table 1 shows the average convergence time for three different population sizes: 10x10, 15x15, 20x20. As the population increases, only a slight increase in the convergence time can be noticed.
 
 \begin{table}
 \centerline {\begin{tabular}{|c|c|}
@@ -129,10 +134,6 @@ The \emph{local homogeneity} measures how many pairs of agents have different fe
 \caption{Simulation results for the balanced agent}
 \end{table} 
 
-
-
-
-
 \paragraph*{}In the case of the more complex agent, we introduced a periodical technological change: the introduction of new features both internal and external, with different probabilities to change during interactions. Table 2 shows the convergence time corresponding to different values of these parameters.
 
 \begin{table}
@@ -141,15 +142,15 @@ The \emph{local homogeneity} measures how many pairs of agents have different fe
 \hline & \textbf{external/internal} & \textbf{num generations} \\
 \hline 2000 & 0.9 / 0.1 & 400 \\
 \hline 200 & 0.9 / 0.1 & 900 \\
-\hline 200 & 1.0 / 1.0 & 1100 \\
-\hline 200 & 0.5 / 0.5 & 800 \\
+\hline 200 & 1.0 / 1.0 & 800 \\
+\hline 200 & 0.5 / 0.5 & 1100 \\
 \hline 
 \end{tabular}}
 \caption{Simulation results for the complex agent.}
 \end{table}
 
 As expected, convergence is reached more rapidly if changes are done at a slower rate. 
-When reducing the change period from 2000 to 200, and maintaining cultural attractiveness biased towards the extern features, a significant increase can be noticed in the number of generations until convergence. Moreover, a non quantifiable, but noticeable difference in the number of values for each feature can be seen in this simulation (see Fig. 1)
+When reducing the change period from 2000 to 200, and maintaining cultural attractiveness biased towards the extern features, a significant increase can be noticed in the number of generations until convergence. Moreover, a not easily explainable, but noticeable difference in the number of values for each feature can be seen in this simulation (see Fig. 1)
 
 \begin{figure}[htp]
 		\centering
@@ -158,6 +159,10 @@ When reducing the change period from 2000 to 200, and maintaining cultural attra
 		\label{Fig 1}
 \end{figure}
 
+When removing the cultural attractiveness, and giving both internal and external features a probability of 1 to be changed, the number of generations until convergence slightly decreases.
+
+If, however we set these probabilities to 0.5 each, convergence is reached later, and we could also notice how the number of values for each feature becomes uniformly distributed in the population (see figure 2).
+
 \begin{figure}[htp]
 		\centering
 		\includegraphics[width=\textwidth]{fig2}
@@ -165,22 +170,14 @@ When reducing the change period from 2000 to 200, and maintaining cultural attra
 		\label{Fig 2}
 \end{figure}
 
-When removing the cultural attractiveness, and giving both internal and external features a probability of 1 to be changed, the number of generations until convergence slightly decreases.
-
-If, however we set these probabilities to 0.5 each, convergence is reached later, and we could also notice how the number of values for each feature becomes uniformly distributed in the population (see figure 2)
-
-
-
-
 
 \section{Conclusions}
 
-The results presented in the previous section  etc etcThe results presented in the previous section  etc etc
-The results presented in the previous section  etc etc
-The results presented in the previous section  etc etc
-The results presented in the previous section  etc etc
-The results presented in the previous section  etc etc
-The results presented in the previous section  etc etc
+We ran three types of experiments, two of which were meant to offer a baseline for the third one. The baseline simulations generally followed the expected outcomes, as given in the related work we considered, though with some surprising turnovers. For instance, in the simple agent simulation, the size of the neighborhood and the imposed selection process actually leads to a destabilizing effect, i.e. the number of regions reaches a stable state, but the region boundaries change. Individuals end up having a single different feature, but due to the increased neighborhood size they keep exchanging the traits of that feature between them.
+The surprise in the Balanced Agent experiment comes from the convergence speed. Given the fact that agents have to find a balance between their so called internal and external features, we would have expected the time the population takes to find stable solutions to be greater than what our simulations have shown.
+
+The third and most interesting experiment showed what influence destabilizing factors, such as introducing new features or feature preference, have on measures like convergence speed and number of regions per feature. The influence on the total number of stable regions is yet to be analyzed.
+
 
 \newpage
 \pagebreak
