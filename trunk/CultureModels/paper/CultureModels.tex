@@ -96,7 +96,7 @@ Our testing and experimentation framework is based on the above mentioned model 
 
 \paragraph*{}The second objective was to duplicate a more complicated setup which relies on a modification of Axelrod's model as described in \cite{Kennedy01}. This setup changes the way in which agents influence each other and copy traits from one another. Instead of relying on the similarity between their features, agents must strive to obtain an equilibrium between two subsets of their features. An agents features are again modeled as an array of integer values. Let us assume that an agent has 5 features and that it must strive to achieve equality between the sum of the first three features and the last two. Thus, an agent with the string 34153 would satisfy the requirements \textit{(3 + 4 + 1 = 5 + 3)}. Now, given two agents \textit{Ag1} and \textit{Ag2}, \textit{Ag1} will copy the trait from a non-matching feature, if the difference of its two subsets is greater than that of Ag2 (Ag1 has a more consistent set of features). As shown in \cite{Kennedy01}, the interpretation of this simulation is that a string may be seen as a set of features, attitudes, or beliefs held by an individual, which must be internally consistent in order to become stable. The features are also constrained to be externally consistent, that is, individuals strive to resemble their neighbors, at least when the neighbors are relatively successful at attaining a "good" set of features.
 
-\paragraph*{ }The second objective was the premise for the third one, which sees the implementation of an experiment based on the extensions proposed by Axelrod to his original model. We added the notions of \emph{cultural attractiveness} (some traits are less likely to change than others) and \emph{technological change} (introduction of new features or more attractive traits) to the modification described in the previous objective. Thus, the model that we analyzed is a combination of two proposed modifications to the original hypotheses. 
+\paragraph*{}The second objective was the premise for the third one, which sees the implementation of an experiment based on the extensions proposed by Axelrod to his original model. We added the notions of \emph{cultural attractiveness} (some traits are less likely to change than others) and \emph{technological change} (introduction of new features or more attractive traits) to the modification described in the previous objective. Thus, the model that we analyzed is a combination of two proposed modifications to the original hypotheses. 
 \emph{Technological change} is expressed by adding two features to the individuals in a chosen region: the first feature is an internal one an has the same value for all individuals in the chosen region, while the second feature is external, and varies randomly among the individuals in that region.
 \emph{Cultural attractiveness} is expressed by making external features more likely to change than internal features. 
 The expected outcome of this simulation was that of a more dynamic population that might not stabilize to form different regions. Rather, regions might only show signs of stabilization for a given amount of time. As a consequence, we will reconsider the measures of homogeneity as the development of our experiment progresses.
@@ -116,10 +116,24 @@ The \emph{local homogeneity} measures how many pairs of agents have different fe
 
 \paragraph*{}The actual baseline simulation was run with random interacting agents. In each generation, a given number of agents were randomly chosen to interact with one of their neighbors (also randomly selected). The results were as expected: after a number of generations, the population converged towards a uniform stable region, with very few "islands". In our simulation, it took the population 500 generations to converge.
 
-\paragraph*{}For the second experiment ... (to do BalancedAgent runs )
+\paragraph*{}For the second type of agent (the balanced agent) we ran the simulation multiple times. Table 1 shows the average convergence time for , for three different population sizes: 10x10, 15x15, 20x20. As the population increases, only a slight increase in the convergence time can be noticed.
+
+\begin{table}
+\centerline {\begin{tabular}{|c|c|}
+\hline \textbf{Population size} & \textbf{ Average convergence time } \\
+\hline 10 x 10 & 550 \\ 
+\hline 15 x 15 & 556 \\ 
+\hline 20 x 20 & 615 \\ 
+\hline 
+\end{tabular}}
+\caption{Simulation results for the balanced agent}
+\end{table} 
 
 
-\paragraph*{}In the case of the more complex agent, we introduced a periodical technological change: the introduction of new features both internal and external, with different probabilities to change during interactions. Table 1 shows the convergence time corresponding to different values of these parameters.
+
+
+
+\paragraph*{}In the case of the more complex agent, we introduced a periodical technological change: the introduction of new features both internal and external, with different probabilities to change during interactions. Table 2 shows the convergence time corresponding to different values of these parameters.
 
 \begin{table}
 \centerline{\begin{tabular}{|c|c|c|}
@@ -131,7 +145,7 @@ The \emph{local homogeneity} measures how many pairs of agents have different fe
 \hline 200 & 0.5 / 0.5 & 800 \\
 \hline 
 \end{tabular}}
-\caption{Complex Simulation Results.}
+\caption{Simulation results for the complex agent.}
 \end{table}
 
 As expected, convergence is reached more rapidly if changes are done at a slower rate. 
@@ -169,6 +183,7 @@ The results presented in the previous section  etc etc
 The results presented in the previous section  etc etc
 
 \newpage
+\pagebreak
 
 \vskip 0.2in
 \bibliographystyle{plain}
